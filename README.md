@@ -1,1 +1,1 @@
-# d2jam-1
+# A Godot 4.4 Template made for Game Jams
