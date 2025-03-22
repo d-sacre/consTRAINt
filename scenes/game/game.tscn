@@ -1,14 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://cie2vrgs8gcr7"]
+[gd_scene load_steps=5 format=3 uid="uid://cie2vrgs8gcr7"]
 
 [ext_resource type="PackedScene" uid="uid://bcgdncrl6vkrc" path="res://scenes/game/open/open.tscn" id="1_7h61r"]
+[ext_resource type="Script" uid="uid://0eehplv5pcan" path="res://scenes/game/game.gd" id="1_kelw5"]
 [ext_resource type="PackedScene" uid="uid://bj5o7haq0dls0" path="res://scenes/menus/game/inGameMenu.tscn" id="2_0sr1o"]
-[ext_resource type="PackedScene" uid="uid://c1aykdc0tfoo" path="res://scenes/game/player/player.tscn" id="2_kelw5"]
+[ext_resource type="PackedScene" uid="uid://ddj20jpxe3oc3" path="res://scenes/game/vehicles/railcar/railcar.tscn" id="2_kelw5"]
 
-[node name="level" type="Node2D"]
+[node name="game" type="Node2D"]
+script = ExtResource("1_kelw5")
 
 [node name="open" parent="." instance=ExtResource("1_7h61r")]
 
-[node name="player" parent="." instance=ExtResource("2_kelw5")]
+[node name="railcar" parent="." instance=ExtResource("2_kelw5")]
 position = Vector2(0, 540)
 
 [node name="UI" type="CanvasLayer" parent="."]

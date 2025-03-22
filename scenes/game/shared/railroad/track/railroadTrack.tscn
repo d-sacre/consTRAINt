@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1ji45hgyfm80"]
+
+[ext_resource type="Texture2D" uid="uid://c6b45b7sclifq" path="res://scenes/game/shared/railroad/track/sprites/railroad_track.png" id="1_5p608"]
+[ext_resource type="Script" uid="uid://dd4qhu3bcdlk8" path="res://scenes/game/shared/railroad/track/railroadTrack.gd" id="2_e2dfo"]
+
+[node name="railroadTrack" type="Sprite2D"]
+texture = ExtResource("1_5p608")
+centered = false
+offset = Vector2(0, 16)
+script = ExtResource("2_e2dfo")

@@ -119,6 +119,9 @@ func update_user_settings(keyChain : Array, value) -> void:
 func get_user_settings() -> Dictionary:
 	return self._userSettings
 
+func get_user_setting_by_key_chain_safe(keyChain : Array):
+	return DictionaryParsing.get_by_key_chain_safe(self._userSettings, keyChain)
+
 ################################################################################
 #### SIGNAL HANDLING ###########################################################
 ################################################################################
@@ -140,3 +143,9 @@ func _process(_delta: float) -> void:
 		WindowManager.toggle_fullscreen()
 
 		self.update_user_settings(["visual", "fullscreen"], WindowManager.is_fullscreen())
+
+	if Input.is_action_just_pressed("toggle_debug"):
+		self.update_user_settings(
+			["performance", "debug"], 
+			!self.get_user_setting_by_key_chain_safe(["performance", "debug"])
+		)

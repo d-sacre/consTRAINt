@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dl38m11t3p2qh" path="res://icon.svg" id="1_4m2od"]
 [ext_resource type="Script" uid="uid://cjsvas8mwsg6f" path="res://scenes/game/player/player.gd" id="1_t5cse"]
 
-[node name="player" type="Node2D"]
+[node name="railcar" type="Node2D"]
 script = ExtResource("1_t5cse")
 
 [node name="Camera2D" type="Camera2D" parent="."]

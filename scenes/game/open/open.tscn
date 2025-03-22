@@ -1,18 +1,19 @@
-[gd_scene load_steps=5 format=3 uid="uid://bcgdncrl6vkrc"]
+[gd_scene load_steps=6 format=3 uid="uid://bcgdncrl6vkrc"]
 
 [ext_resource type="Texture2D" uid="uid://cj7y5rirtv2tn" path="res://scenes/game/open/assets/2d/backgrounds/landscape_open_1_sky.png" id="1_2aru3"]
 [ext_resource type="Texture2D" uid="uid://c0pcm2hsu8plb" path="res://scenes/game/open/assets/2d/backgrounds/landscape_open_2_clouds.png" id="2_fiu06"]
 [ext_resource type="Texture2D" uid="uid://day4aqmiwpldu" path="res://scenes/game/open/assets/2d/backgrounds/landscape_open_3_landscape_bg.png" id="3_b7inm"]
 [ext_resource type="Texture2D" uid="uid://dp44igoxp81td" path="res://scenes/game/open/assets/2d/backgrounds/landscape_open_4_landscape_fg.png" id="4_ikiyn"]
+[ext_resource type="PackedScene" uid="uid://b1ji45hgyfm80" path="res://scenes/game/shared/railroad/track/railroadTrack.tscn" id="5_ikiyn"]
 
 [node name="open" type="Node2D"]
 
-[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+[node name="ParallaxBackground" type="Node2D" parent="."]
 
 [node name="1_sky" type="Parallax2D" parent="ParallaxBackground"]
 scroll_scale = Vector2(0, 0)
 repeat_size = Vector2(1920, 0)
-repeat_times = 4
+repeat_times = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/1_sky"]
 texture = ExtResource("1_2aru3")
@@ -21,7 +22,7 @@ centered = false
 [node name="2_clouds" type="Parallax2D" parent="ParallaxBackground"]
 scroll_scale = Vector2(0.1, 0.1)
 repeat_size = Vector2(1920, 0)
-repeat_times = 4
+repeat_times = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/2_clouds"]
 texture = ExtResource("2_fiu06")
@@ -30,7 +31,7 @@ centered = false
 [node name="3_landscape_bg" type="Parallax2D" parent="ParallaxBackground"]
 scroll_scale = Vector2(0.5, 0.5)
 repeat_size = Vector2(1920, 0)
-repeat_times = 4
+repeat_times = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/3_landscape_bg"]
 texture = ExtResource("3_b7inm")
@@ -38,8 +39,14 @@ centered = false
 
 [node name="4_landscape_fg" type="Parallax2D" parent="ParallaxBackground"]
 repeat_size = Vector2(1920, 0)
-repeat_times = 4
+repeat_times = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/4_landscape_fg"]
 texture = ExtResource("4_ikiyn")
 centered = false
+
+[node name="railroadTrack" type="Parallax2D" parent="ParallaxBackground"]
+repeat_size = Vector2(1920, 0)
+repeat_times = 3
+
+[node name="railroadTrack" parent="ParallaxBackground/railroadTrack" instance=ExtResource("5_ikiyn")]

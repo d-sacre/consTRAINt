@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://ddj20jpxe3oc3"]
+
+[ext_resource type="Script" uid="uid://jongjnjii3ar" path="res://scenes/game/vehicles/railcar/railcar.gd" id="1_s7dxq"]
+[ext_resource type="Texture2D" uid="uid://bs1yn7v4yblwi" path="res://scenes/game/vehicles/railcar/sprites/railcar_exterior.png" id="2_s7dxq"]
+
+[node name="railcar" type="Node2D"]
+script = ExtResource("1_s7dxq")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, 303)
+texture = ExtResource("2_s7dxq")

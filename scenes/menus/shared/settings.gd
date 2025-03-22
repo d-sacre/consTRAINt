@@ -74,8 +74,6 @@ const _uiElementsRootPath : String = "PanelContainer/MarginContainer/VBoxContain
 func _on_settings_value_changed(keyChain : Array, value) -> void:
 	SettingsManager.update_user_settings(keyChain, value)
 
-# TODO: Needs update function, so that display matches changes made elsewhere
-
 ################################################################################
 #### GODOT LOADTIME FUNCTION OVERRIDES #########################################
 ################################################################################
