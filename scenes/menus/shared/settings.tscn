@@ -1,0 +1,138 @@
+[gd_scene load_steps=4 format=3 uid="uid://daomsb2254sgq"]
+
+[ext_resource type="Script" uid="uid://duvyxmsrhyg8f" path="res://scenes/menus/shared/settings.gd" id="1_f0e48"]
+[ext_resource type="PackedScene" uid="uid://dgq4b24wh2tei" path="res://scenes/menus/shared/elements/sliders/horizontal/sliderHorizontalTEMPLATE.tscn" id="2_8vdjn"]
+[ext_resource type="PackedScene" uid="uid://bauooc6epoy8i" path="res://scenes/menus/shared/elements/buttons/check/checkButtonTEMPLATE.tscn" id="3_o3c31"]
+
+[node name="settings" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_f0e48")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(640, 640)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -256.0
+offset_right = 256.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="title" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=42][b]Settings[/b][/font_size]"
+fit_content = true
+scroll_active = false
+
+[node name="controls" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/controls"]
+layout_mode = 2
+
+[node name="description" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/controls/VBoxContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=24][b]Controls[/b][/font_size]
+Move: [bgcolor=black]WASD[/bgcolor],  [bgcolor=black]Arrows[/bgcolor]
+Jump:  [bgcolor=black]Space[/bgcolor]
+Fullscreen:  [bgcolor=black]F[/bgcolor]
+Menu/Cancel:  [bgcolor=black]ESC[/bgcolor],  [bgcolor=black]BACKSPACE[/bgcolor],  [bgcolor=black]RMB[/bgcolor]
+"
+fit_content = true
+
+[node name="audio" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/audio"]
+layout_mode = 2
+
+[node name="title" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/audio/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=24][b]Audio[/b][/font_size]"
+fit_content = true
+scroll_active = false
+
+[node name="master" parent="PanelContainer/MarginContainer/VBoxContainer/audio/VBoxContainer" instance=ExtResource("2_8vdjn")]
+layout_mode = 2
+_name = "Master"
+
+[node name="ui" parent="PanelContainer/MarginContainer/VBoxContainer/audio/VBoxContainer" instance=ExtResource("2_8vdjn")]
+layout_mode = 2
+_name = "UI"
+
+[node name="ambience" parent="PanelContainer/MarginContainer/VBoxContainer/audio/VBoxContainer" instance=ExtResource("2_8vdjn")]
+layout_mode = 2
+_name = "Ambience"
+
+[node name="game" parent="PanelContainer/MarginContainer/VBoxContainer/audio/VBoxContainer" instance=ExtResource("2_8vdjn")]
+layout_mode = 2
+_name = "Game"
+
+[node name="music" parent="PanelContainer/MarginContainer/VBoxContainer/audio/VBoxContainer" instance=ExtResource("2_8vdjn")]
+layout_mode = 2
+_name = "Music"
+
+[node name="visuals" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/visuals"]
+layout_mode = 2
+
+[node name="title" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/visuals/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=24][b]Visuals[/b][/font_size]"
+fit_content = true
+scroll_active = false
+
+[node name="fullscreen" parent="PanelContainer/MarginContainer/VBoxContainer/visuals/VBoxContainer" instance=ExtResource("3_o3c31")]
+layout_mode = 2
+_name = "Fullscreen"
+
+[node name="performance" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/performance"]
+layout_mode = 2
+
+[node name="title" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/performance/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=24][b]Performance[/b][/font_size]"
+fit_content = true
+scroll_active = false
+
+[node name="debug" parent="PanelContainer/MarginContainer/VBoxContainer/performance/VBoxContainer" instance=ExtResource("3_o3c31")]
+layout_mode = 2
+_name = "Show Debug"

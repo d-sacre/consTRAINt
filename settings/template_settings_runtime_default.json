@@ -1,0 +1,23 @@
+{
+    "accessibility": {},
+    "input": {
+        "method": "default"
+    },
+    "language": {},
+    "volume": {
+        "master": 100, 
+        "sfx": {
+            "ui":  50, 
+            "ambience": 50, 
+            "game": 100
+        },
+        "music": 50
+    },
+    "visual": {
+        "fullscreen": false,
+        "color": 0
+    },
+    "performance": {
+        "debug": false
+    }
+}

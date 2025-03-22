@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cr5q72y868xfy"]
+
+[ext_resource type="Script" uid="uid://bkn7yfos3a1gu" path="res://utils/debug/debug.gd" id="1_uwaeq"]
+
+[node name="debug" type="Label"]
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("1_uwaeq")

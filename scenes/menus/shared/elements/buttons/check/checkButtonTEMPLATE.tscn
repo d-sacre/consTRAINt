@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://bauooc6epoy8i"]
+
+[ext_resource type="Script" uid="uid://cygvbvtrmfbht" path="res://scenes/menus/shared/elements/buttons/check/checkButtonTEMPLATE.gd" id="1_5ed5r"]
+
+[node name="checkButtonTEMPLATE" type="GridContainer"]
+columns = 3
+script = ExtResource("1_5ed5r")
+_name = ""
+
+[node name="name" type="Label" parent="."]
+layout_mode = 2
+
+[node name="VSeparator" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="button" type="CheckButton" parent="."]
+layout_mode = 2

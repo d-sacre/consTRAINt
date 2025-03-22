@@ -1,0 +1,113 @@
+[gd_scene load_steps=6 format=3 uid="uid://bmjvk725nt4x3"]
+
+[ext_resource type="Script" uid="uid://78xf86h7hhmc" path="res://scenes/menus/main/mainMenu.gd" id="2_3cetj"]
+[ext_resource type="PackedScene" uid="uid://dpvf6t38iqcp1" path="res://scenes/menus/main/contexts/credits/credits.tscn" id="2_flnah"]
+[ext_resource type="Script" uid="uid://cvdcqoygf771p" path="res://scenes/menus/main/contexts/credits/credits.gd" id="3_aupyl"]
+[ext_resource type="PackedScene" uid="uid://daomsb2254sgq" path="res://scenes/menus/shared/settings.tscn" id="4_340ad"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cpeem"]
+
+[node name="mainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_3cetj")
+
+[node name="default" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="title" type="RichTextLabel" parent="default"]
+custom_minimum_size = Vector2(1024, 0)
+layout_mode = 1
+offset_left = -93.0
+offset_top = 177.0
+offset_right = 931.0
+offset_bottom = 265.0
+rotation = -0.404916
+pivot_offset = Vector2(512, 0)
+theme_override_font_sizes/bold_font_size = 64
+bbcode_enabled = true
+text = "[center][b]Main Menu[/b][/center]"
+fit_content = true
+
+[node name="buttonCluster" type="MarginContainer" parent="default"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 1717.0
+offset_top = 441.5
+offset_right = 1880.0
+offset_bottom = 598.5
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/margin_right = 100
+
+[node name="VBoxContainer" type="VBoxContainer" parent="default/buttonCluster"]
+layout_mode = 2
+
+[node name="play" type="Button" parent="default/buttonCluster/VBoxContainer"]
+layout_mode = 2
+text = "Play"
+
+[node name="HSeparator" type="HSeparator" parent="default/buttonCluster/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+theme_override_styles/separator = SubResource("StyleBoxEmpty_cpeem")
+
+[node name="settings" type="Button" parent="default/buttonCluster/VBoxContainer"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+text = "Settings"
+
+[node name="HSeparator2" type="HSeparator" parent="default/buttonCluster/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+theme_override_styles/separator = SubResource("StyleBoxEmpty_cpeem")
+
+[node name="credits" type="Button" parent="default/buttonCluster/VBoxContainer"]
+layout_mode = 2
+text = "Credits"
+
+[node name="HSeparator3" type="HSeparator" parent="default/buttonCluster/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+theme_override_styles/separator = SubResource("StyleBoxEmpty_cpeem")
+
+[node name="exit" type="Button" parent="default/buttonCluster/VBoxContainer"]
+layout_mode = 2
+text = "Exit"
+
+[node name="contexts" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="credits" parent="contexts" instance=ExtResource("2_flnah")]
+layout_mode = 1
+offset_left = -360.0
+offset_top = -320.0
+offset_right = 360.0
+offset_bottom = 320.0
+script = ExtResource("3_aupyl")
+
+[node name="settings" parent="contexts" instance=ExtResource("4_340ad")]
+visible = false
+
+[node name="debug" type="CanvasLayer" parent="."]

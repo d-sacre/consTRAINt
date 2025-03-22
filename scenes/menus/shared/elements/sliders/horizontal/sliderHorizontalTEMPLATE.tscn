@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://dgq4b24wh2tei"]
+
+[ext_resource type="Script" uid="uid://bu03y4b4wy88" path="res://scenes/menus/shared/elements/sliders/horizontal/sliderHorizontalTEMPLATE.gd" id="1_4jf3w"]
+
+[node name="sliderTemplate" type="HBoxContainer"]
+script = ExtResource("1_4jf3w")
+_name = ""
+
+[node name="name" type="Label" parent="."]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+
+[node name="hsep" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="slider" type="HSlider" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0
+
+[node name="hsep2" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="value" type="Label" parent="."]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+text = "0/100"
+horizontal_alignment = 2
