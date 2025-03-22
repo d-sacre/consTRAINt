@@ -8,6 +8,11 @@ const SPEED = 350
 # REMARK: Only temporary, for development purposes
 var _autoPlay : bool = false
 
+@onready var _drawingArea : Node2D = $Sprite2D/drawingArea
+
+func allow_drawing(status : bool) -> void:
+	self._drawingArea.allow_drawing(status)
+
 ################################################################################
 #### GODOT RUNTIME FUNCTION OVERRIDES ##########################################
 ################################################################################

@@ -9,6 +9,8 @@ extends PanelContainer
 ################################################################################
 ################################################################################
 
+signal menu_visibility_changed
+
 ################################################################################
 #### CONSTANT DEFINITIONS ######################################################
 ################################################################################
@@ -43,6 +45,7 @@ const _buttonPathRoot : String = "MarginContainer/VBoxContainer/"
 func _on_resume_pressed() -> void:
 	visible = false
 	get_tree().paused = false
+	self.menu_visibility_changed.emit(self.visible)
 
 func _on_exit_to_main_menu_pressed() -> void:
 	TransitionManager.transition_to_scene(CONS_TRAIN_T.SCENES.MAIN_MENU.PATH)
@@ -85,3 +88,4 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("toggle_ingame_menu"):
 		self.visible = !self.visible
 		get_tree().paused = !get_tree().paused
+		self.menu_visibility_changed.emit(self.visible)
