@@ -13,7 +13,7 @@ class SCENES:
         const  PATH : String = "res://scenes/menus/main/mainMenu.tscn"
     
     class GAME:
-        const PATH : String = "res://scenes/game/game3d.tscn"
+        const PATH : String = "res://scenes/game/game.tscn"
 
 class CONFIGURATION_FILES:
     class USER: 
