@@ -1,0 +1,144 @@
+[
+	{
+		"section": 
+		{
+			"heading": "Contributors",
+			"content": [
+				{
+					"vspace" : 1
+				},
+				{
+					"subsection": 
+						{
+							"heading": "Faltysian",
+							"content": [
+								{
+									"itemize": {
+										"content": [
+											"Original Idea"
+										]
+									}
+								}
+							]
+						}
+				},
+				{
+					"vspace": 1
+				},
+				{
+					"subsection": 
+						{
+							"heading": "dsacre",
+							"content": [
+								{
+									"itemize": {
+										"content": [
+											"Original Idea",
+											"Programming",
+											"Art",
+											"Animation",
+											"Visual Effects",
+											"UI Design", 
+											"Testing Linux"
+										]
+									}
+								}
+							]
+						}
+				},
+				{
+					"vspace": 1
+				},
+				{
+					"subsection": 
+						{
+							"heading": "gmpl4yer",
+							"content": [
+								{
+									"itemize": {
+										"content": [
+											"Sound Design",
+											"Testing Windows"
+										]
+									}
+								}
+							]
+						}
+				}
+				,
+				{
+					"vspace": 1
+				},
+				{
+					"subsection": 
+						{
+							"heading": "IronRui",
+							"content": [
+								{
+									"itemize": {
+										"content": [
+											"Lead Composer",
+											"Testing Windows"
+										]
+									}
+								}
+							]
+						}
+				}
+			]
+		}
+	},
+	{
+		"vspace" : 2
+	},
+	{
+		"section": {
+			"heading": "Used Assets",
+			"content": [
+				{
+					"vspace" : 1
+				},
+                {
+					"subsection": {
+						"heading": "Art:",
+						"content": [
+                            {
+                                "itemize": {
+                                    "content": [
+                                        "John Doe: {quote}Asset Title/Description{quote}\n{urlstart}https://example.com{urlend}\nlicense: Creative Commons Attribution-Share Alike 3.0"
+									]
+                                }
+                            }
+                        ]
+                    }
+                },
+				{
+					"vspace" : 1
+				},
+                {
+					"subsection": {
+						"heading": "Sound Effects:",
+						"content": [
+							{
+								"paragraph": "If not stated otherwise, sounds are provided by\nSoundly ({urlstart}https://getsoundly.com/{urlend})\nunder the Professional Subscription License.\nThe following sounds have been used:\n"
+							},
+                            {
+                                "itemize": {
+                                    "content": [
+                                        "<NAME OF SOUND>"
+									]
+                                }
+                            }
+                        ]
+                    }
+                }
+			]
+		}
+	},
+	{
+		"vspace": 1
+	},
+	{
+		"paragraph": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+	}
+]
