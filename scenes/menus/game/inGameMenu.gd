@@ -45,7 +45,7 @@ func _on_resume_pressed() -> void:
 	get_tree().paused = false
 
 func _on_exit_to_main_menu_pressed() -> void:
-	TransitionManager.transition_to_scene(TEMPLATE.SCENES.MAIN_MENU.PATH)
+	TransitionManager.transition_to_scene(CONS_TRAIN_T.SCENES.MAIN_MENU.PATH)
 
 func _on_exit_to_system_pressed() -> void:
 	TransitionManager.exit_to_system()

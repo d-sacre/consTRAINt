@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://bauooc6epoy8i"]
 
-[ext_resource type="Script" uid="uid://cygvbvtrmfbht" path="res://scenes/menus/shared/elements/buttons/check/checkButtonTEMPLATE.gd" id="1_5ed5r"]
+[ext_resource type="Script" uid="uid://cygvbvtrmfbht" path="res://scenes/menus/shared/elements/buttons/check/checkButtonCONS_TRAIN_T.gd" id="1_5ed5r"]
 
-[node name="checkButtonTEMPLATE" type="GridContainer"]
+[node name="checkButtonCONS_TRAIN_T" type="GridContainer"]
 columns = 3
 script = ExtResource("1_5ed5r")
 _name = ""

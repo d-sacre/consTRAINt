@@ -1,4 +1,4 @@
-class_name TEMPLATE
+class_name CONS_TRAIN_T
 
 class COLLISION_LAYERS:
     const CAMERA : int = 2
@@ -18,7 +18,7 @@ class SCENES:
 class CONFIGURATION_FILES:
     class USER: 
         class DEFAULT:
-            const PATH : String = "res://settings/template_settings_runtime_default.json"
+            const PATH : String = "res://settings/consTRAINt_settings_runtime_default.json"
 
         class RUNTIME:
-            const PATH : String = "user://template_userSettings.json"
+            const PATH : String = "user://consTRAINt_userSettings.json"

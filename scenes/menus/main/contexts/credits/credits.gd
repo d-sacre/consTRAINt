@@ -8,7 +8,7 @@ extends RichTextLabel
 #                                                                              
 # This script expects the following Globals:                                   
 # - Json2BBCode: res://utils/json2BBCode.gd
-# - TEMPLATE: res://settings/globals.gd
+# - CONS_TRAIN_T: res://settings/globals.gd
 ################################################################################
 ################################################################################
 ################################################################################

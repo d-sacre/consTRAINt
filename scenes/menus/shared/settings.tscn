@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://daomsb2254sgq"]
 
 [ext_resource type="Script" uid="uid://duvyxmsrhyg8f" path="res://scenes/menus/shared/settings.gd" id="1_f0e48"]
-[ext_resource type="PackedScene" uid="uid://dgq4b24wh2tei" path="res://scenes/menus/shared/elements/sliders/horizontal/sliderHorizontalTEMPLATE.tscn" id="2_8vdjn"]
-[ext_resource type="PackedScene" uid="uid://bauooc6epoy8i" path="res://scenes/menus/shared/elements/buttons/check/checkButtonTEMPLATE.tscn" id="3_o3c31"]
+[ext_resource type="PackedScene" uid="uid://dgq4b24wh2tei" path="res://scenes/menus/shared/elements/sliders/horizontal/sliderHorizontalCONS_TRAIN_T.tscn" id="2_8vdjn"]
+[ext_resource type="PackedScene" uid="uid://bauooc6epoy8i" path="res://scenes/menus/shared/elements/buttons/check/checkButtonCONS_TRAIN_T.tscn" id="3_o3c31"]
 
 [node name="settings" type="Control"]
 process_mode = 3

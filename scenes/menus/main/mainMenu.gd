@@ -8,7 +8,7 @@ extends Control
 # - SettingsManager: res://managers/settings/SettingsManager.gd
 #                                                                              
 # This script expects the following Globals:                                   
-# - TEMPLATE: res://settings/globals.gd
+# - CONS_TRAIN_T: res://settings/globals.gd
 ################################################################################
 ################################################################################
 ################################################################################
@@ -21,7 +21,7 @@ const _buttonPathRoot : String = "default/buttonCluster/VBoxContainer/"
 ################################################################################
 #### PRIVATE MEMBER VARIABLES ##################################################
 ################################################################################
-@export var _playButtonScene : String = TEMPLATE.SCENES.GAME.PATH
+@export var _playButtonScene : String = CONS_TRAIN_T.SCENES.GAME.PATH
 
 ################################################################################
 #### ONREADY MEMBER VARIABLES ##################################################

@@ -18,7 +18,7 @@ extends Node
 # - AudioManager: res://managers/audio/AudioManager.tscn
 #                                                                              
 # This script expects the following Globals:                                   
-# - TEMPLATE: res://settings/globals.gd
+# - CONS_TRAIN_T: res://settings/globals.gd
 ################################################################################
 ################################################################################
 ################################################################################
@@ -29,8 +29,8 @@ extends Node
 # user settings
 # user:// under Linux/MacOS: ~/.local/share/godot/app_userdata/Name, 
 # Windows: %APPDATA%/Name
-const USER_SETTINGS_FILEPATH : String = TEMPLATE.CONFIGURATION_FILES.USER.RUNTIME.PATH
-const FALLBACK_USER_SETTINGS_FILEPATH : String = TEMPLATE.CONFIGURATION_FILES.USER.DEFAULT.PATH
+const USER_SETTINGS_FILEPATH : String = CONS_TRAIN_T.CONFIGURATION_FILES.USER.RUNTIME.PATH
+const FALLBACK_USER_SETTINGS_FILEPATH : String = CONS_TRAIN_T.CONFIGURATION_FILES.USER.DEFAULT.PATH
 
 ################################################################################
 #### PRIVATE MEMBER VARIABLES ##################################################
@@ -70,7 +70,7 @@ func _update() -> void:
 
 		else:
 			if _tmp_debugNumberOfChildren == 0:
-				var _tmp_newDebugElement : = load(TEMPLATE.DEBUG.DEFAULT_PROPERTIES.GUI.SCENE_PATH)
+				var _tmp_newDebugElement : = load(CONS_TRAIN_T.DEBUG.DEFAULT_PROPERTIES.GUI.SCENE_PATH)
 				_tmp_debugRootNode.add_child(_tmp_newDebugElement.instantiate())
 
 func _initialize() -> void:

@@ -10,7 +10,7 @@ extends Control
 # - DictionaryParsing: res://utils/DictionaryParsing.gd
 #                                                                              
 # This script expects the following Globals:                                   
-# - TEMPLATE: res://settings/globals.gd
+# - CONS_TRAIN_T: res://settings/globals.gd
 ################################################################################
 ################################################################################
 ################################################################################
