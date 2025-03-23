@@ -32,7 +32,20 @@ var _error : int = self.ERROR_CODES.NO_ERROR
 ## verifies if the [code]keyChain[/code] is valid for the given 
 ## [code]Dictionary[/code] and returns [code]true[/code] if it is so.
 func is_key_chain_valid(dict : Dictionary, keyChain : Array) -> bool:
-	return false
+	if len(keyChain) != 0:
+		var _tmp_key = keyChain[0]
+		if  _tmp_key in dict:
+			var _tmp_keyChain = keyChain.duplicate()
+			_tmp_keyChain.remove_at(0)
+			var _tmp_dict = dict[_tmp_key]
+
+			return self.is_key_chain_valid(_tmp_dict, _tmp_keyChain)
+
+		else:
+			return false
+
+	else:
+		return true
 
 ## gets an element of the [code]Dictionary[/code] by recursively
 ## iterating over the keys provided in the [code]keyChain[/code] and returns its

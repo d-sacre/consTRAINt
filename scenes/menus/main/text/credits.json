@@ -166,7 +166,9 @@
                             {
                                 "itemize": {
                                     "content": [
-                                        "<NAME OF SOUND>"
+                                        "{quote}Yellow Train 2{quote}, license: Creative Commons Attribution 4.0 International",
+										"{quote}Ambience, Rural, Countryside, Birds, Wind, Distant Traffic, Engine Starts, Idle{quote}",
+										"{quote}TRNDiesl-LR_NewZealand-Train, Diesel, Engine, Idle, Locomotive, Exterior, Train Station, Auckland, _FTUS_AIOL_192k24b{quote}"
 									]
                                 }
                             }

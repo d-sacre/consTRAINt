@@ -4,4 +4,6 @@
 .vscode/
 
 scenes/game/open/assets/audio/sfx/
+scenes/game/shared/assets/audio/sfx/
 globalAssets/music/
+scenes/game/vehicles/railcar/assets/audio/sfx/

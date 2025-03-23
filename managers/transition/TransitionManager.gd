@@ -141,6 +141,7 @@ func is_state_scene_transition() -> bool:
 #### PUBLIC MEMBER FUNCTIONS: TRANSITIONS ######################################
 ################################################################################
 func exit_to_system() -> void:
+	AudioManager.fade_out_master()
 	self._fade_to_black()
 	await self.transition_finished
 
