@@ -93,7 +93,47 @@
 	},
 	{
 		"section": {
-			"heading": "Used Assets",
+			"heading": "Engine & Addons",
+			"content": [
+				{
+					"vspace" : 1
+				},
+				{
+					"subsection": {
+						"heading": "Engine: Godot 4.4 stable",
+						"content": [
+							{
+								"paragraph": "Authors: Juan Linietsky, Ariel Manzur and Godot Contributors.\nLicense: MIT"
+							}
+						]
+					}
+				},
+				{
+					"vspace" : 2
+				},
+				{
+					"subsection": {
+						"heading": "Addons",
+						"content": [
+							{
+								"itemize": {
+									"content": [
+										"irmozius: {quote}Godot Meta Player{quote}\n{urlstart}https://github.com/irmozius/meta_player{urlend}\nLicense: MIT"
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	},
+	{
+		"vspace" : 2
+	},
+	{
+		"section": {
+			"heading": "Foreign Assets",
 			"content": [
 				{
 					"vspace" : 1
@@ -105,7 +145,8 @@
                             {
                                 "itemize": {
                                     "content": [
-                                        "John Doe: {quote}Asset Title/Description{quote}\n{urlstart}https://example.com{urlend}\nlicense: Creative Commons Attribution-Share Alike 3.0"
+                                        "Craftpix Studio: {quote}Simple Natural landscape Pixel Art Background{quote}\n{urlstart}https://opengameart.org/content/simple-natural-landscape-pixel-art-background{urlend}\nLicense: OGA-BY 3.0",
+										"Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com: {quote}Solid Paint Brush{quote}\n{urlstart}https://commons.wikimedia.org/wiki/File:Font_Awesome_5_solid_paint-brush.svg{urlend}\nLicense: Creative Commons Attribution 4.0 International"
 									]
                                 }
                             }
@@ -134,11 +175,5 @@
                 }
 			]
 		}
-	},
-	{
-		"vspace": 1
-	},
-	{
-		"paragraph": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 	}
 ]
