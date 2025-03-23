@@ -28,3 +28,7 @@ func _process(_delta: float) -> void:
 
 		if self._line.points.size() > self._pointsMaximum:
 			self._line.remove_point(0)
+			
+		#_tmp_mousePosition.x /= get_viewport_rect().size.x
+		#_tmp_mousePosition.y /= get_viewport_rect().size.y
+		#get_material().set_shader_parameter("target", _tmp_mousePosition)
