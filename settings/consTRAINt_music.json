@@ -1,0 +1,14 @@
+{
+    "themeLight": {
+        "fp": "res://globalAssets/music/consTRAINt_mainTheme_test1.mp3",
+        "volume_db": -6,
+        "playing": false,
+        "autoplay": false,
+        "loop": true,
+        "bpm": 85,
+        "beats_per_bar": 4,
+        "bars": 16,
+        "bus": "Music", 
+        "children": {}
+    }
+}

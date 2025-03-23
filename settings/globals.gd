@@ -22,3 +22,10 @@ class CONFIGURATION_FILES:
 
         class RUNTIME:
             const PATH : String = "user://consTRAINt_userSettings.json"
+
+    class AUDIO:
+        class MUSIC:
+            const PATH : String = "res://settings/consTRAINt_music.json"
+
+        class SFX:
+            const PATH : String = "res://settings/consTRAINt_sfx.json"

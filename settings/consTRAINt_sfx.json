@@ -1,0 +1,13 @@
+{
+	"ambience": {
+        "open_fields": {
+            "background": {
+                "fp": "res://scenes/game/open/assets/audio/sfx/consTRAINt_game_openFields_ambience_background.wav",
+                "volume_db": -18,
+                "playing": false,
+                "autoplay": false,
+                "bus": "Ambience"
+            }
+        }
+    }
+}

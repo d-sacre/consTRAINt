@@ -1,6 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://bwo7ml0kkd0mg"]
+[gd_scene load_steps=4 format=3 uid="uid://bwo7ml0kkd0mg"]
 
 [ext_resource type="Script" uid="uid://cytup1sodmcf7" path="res://managers/audio/AudioManager.gd" id="1_owlhr"]
+[ext_resource type="Script" uid="uid://dpoa2p3nmfsxt" path="res://managers/audio/sfxManager/sfxManager.gd" id="2_2pdj5"]
+[ext_resource type="Script" uid="uid://dos7yaqkmyu0a" path="res://managers/audio/musicManager/musicManager.gd" id="3_ioga7"]
 
 [node name="AudioManager" type="Node"]
+process_mode = 3
 script = ExtResource("1_owlhr")
+
+[node name="sfxManager" type="Node" parent="."]
+script = ExtResource("2_2pdj5")
+
+[node name="musicManager" type="Node" parent="."]
+script = ExtResource("3_ioga7")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="musicManager"]
