@@ -87,6 +87,8 @@ var trans_buffer := {}
 var short := false
 var precision_margin := 0.02
 
+var mplaying : bool = false
+
 signal beat ## Emitted every beat during playback.
 signal bar ## Emitted at the start of each bar during playback.
 
@@ -187,6 +189,7 @@ func transition(player : meta_player = trans_buffer.player):
 
 func mplay():
 	spawn_copy()
+	self.mplaying = true
 	current_bar = 0
 	connect_trans_signals()
 	if automate_volume and target:
@@ -284,6 +287,8 @@ func mstop():
 		await t.finished
 		if copy:
 			copy.queue_free()
+
+	self.mplaying = false
 	
 func play_group():
 	copy.play()
