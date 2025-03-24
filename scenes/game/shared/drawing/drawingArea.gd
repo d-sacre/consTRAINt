@@ -8,14 +8,15 @@ var _drawingAllowed : bool = true
 #### ONREADY MEMBER VARIABLES ##################################################
 ################################################################################
 @onready var _lineVisual : Line2D = $playerFeedback/lineVisualizer/Line2D
-@onready var _lineTexture : Line2D = $maskCreation/lineVisualizer/Line2D
+@onready var _lineTexture : Line2D = $mattePainting/lineVisualizer/Line2D
+@onready var _cloudEmitter : = $playerFeedback/GPUParticles2D
 @onready var _brush : Node2D = $playerFeedback/brush
 
 ################################################################################
 #### PRIVATE MEMBER FUNCTIONS ##################################################
 ################################################################################
-func _manage_line(line : Line2D, position : Vector2, remove : bool = true) -> void:
-	line.add_point(position)
+func _manage_line(line : Line2D, newPoint : Vector2, remove : bool = true) -> void:
+	line.add_point(newPoint)
 
 	if remove:
 		if line.points.size() > self._pointsMaximum:
@@ -37,6 +38,8 @@ func allow_drawing(status : bool) -> void:
 func _process(_delta: float) -> void:
 	if self._drawingAllowed:
 		var _tmp_mousePosition : Vector2 = self.get_local_mouse_position()
+
+		self._cloudEmitter.position = _tmp_mousePosition
 		self._brush.position = _tmp_mousePosition
 
 		self._manage_line(self._lineVisual, _tmp_mousePosition)
