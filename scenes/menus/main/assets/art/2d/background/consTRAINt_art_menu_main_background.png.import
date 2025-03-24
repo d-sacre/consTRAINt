@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c4lllwyqel81w"
-path="res://.godot/imported/railroad_track_debug.png-28d61e145929209a7e5ab83178bfe170.ctex"
+uid="uid://ux325trnd4qh"
+path="res://.godot/imported/consTRAINt_art_menu_main_background.png-f59afdfa1ec6dbcad5471a7be080d3bb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/game/shared/railroad/track/sprites/railroad_track_debug.png"
-dest_files=["res://.godot/imported/railroad_track_debug.png-28d61e145929209a7e5ab83178bfe170.ctex"]
+source_file="res://scenes/menus/main/assets/art/2d/background/consTRAINt_art_menu_main_background.png"
+dest_files=["res://.godot/imported/consTRAINt_art_menu_main_background.png-f59afdfa1ec6dbcad5471a7be080d3bb.ctex"]
 
 [params]
 

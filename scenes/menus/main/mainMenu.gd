@@ -66,6 +66,7 @@ func _on_play_button_pressed() -> void:
 
 func _on_settings_button_pressed() -> void:
 	self._settings.visible = !self._settings.visible
+	self._settings.update_display()
 	self._credits.visible = false
 	
 func _on_credits_button_pressed() -> void:

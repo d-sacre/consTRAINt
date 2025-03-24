@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://dpvf6t38iqcp1"]
+[gd_scene load_steps=2 format=3 uid="uid://dpvf6t38iqcp1"]
+
+[ext_resource type="Script" uid="uid://cvdcqoygf771p" path="res://scenes/menus/main/contexts/credits/credits.gd" id="1_nuhbd"]
 
 [node name="credits" type="RichTextLabel"]
 visible = false
@@ -17,3 +19,4 @@ grow_vertical = 2
 theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
 text = "[font_size=42][b]Credits[/b][/font_size][br]Put credits and acknowledgements here!"
+script = ExtResource("1_nuhbd")

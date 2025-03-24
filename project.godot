@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="ConsTRAINt"
+config/name="Cloud Expresss"
 run/main_scene="uid://bmjvk725nt4x3"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
@@ -36,6 +36,10 @@ window/stretch/aspect="expand"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/meta_player/plugin.cfg")
+
+[gui]
+
+theme/custom="uid://ke8v0mmlj3jr"
 
 [input]
 

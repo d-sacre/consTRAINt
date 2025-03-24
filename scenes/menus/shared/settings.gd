@@ -24,6 +24,12 @@ const _uiElementsRootPath : String = "PanelContainer/MarginContainer/VBoxContain
 #### ONREADY MEMBER VARIABLES ##################################################
 ################################################################################
 @onready var _uiElementLUT : Dictionary = {
+	"resetAudio": {
+		"type": "button",
+		"reference": get_node(self._uiElementsRootPath + "audio/VBoxContainer/HBoxContainer/resetAudio"),
+		"signal": "pressed",
+		"callback": _on_reset_audio_to_default
+	},
 	"master": {
 		"type": "slider",
 		"reference": get_node(self._uiElementsRootPath + "audio/VBoxContainer/master"),
@@ -69,8 +75,27 @@ const _uiElementsRootPath : String = "PanelContainer/MarginContainer/VBoxContain
 }
 
 ################################################################################
+#### PUBLIC MEMBER FUNCTIONS ###################################################
+################################################################################
+func update_display() -> void:
+	var _tmp_userSettings : Dictionary = SettingsManager.get_user_settings()
+
+	for _uiElementID in self._uiElementLUT:
+		var _tmp_uiElement : Dictionary = self._uiElementLUT[_uiElementID]
+
+		if _tmp_uiElement.reference.has_method("initialize"):
+			_tmp_uiElement.reference.initialize(
+				_tmp_uiElement["keyChain"], 
+				DictionaryParsing.get_by_key_chain_safe(_tmp_userSettings, _tmp_uiElement["keyChain"])
+			)
+
+################################################################################
 #### SIGNAL HANDLING ###########################################################
 ################################################################################
+func _on_reset_audio_to_default() -> void:
+	var _tmp_value : Dictionary = SettingsManager.get_user_setting_default_by_key_chain_safe(["volume"])
+	# SettingsManager.update_user_settings(["volume"], _tmp_value)
+
 func _on_settings_value_changed(keyChain : Array, value) -> void:
 	SettingsManager.update_user_settings(keyChain, value)
 
@@ -84,11 +109,17 @@ func _ready() -> void:
 		var _tmp_uiElement : Dictionary = self._uiElementLUT[_uiElementID]
 
 		if "signal" in _tmp_uiElement:
-			_tmp_uiElement.reference.connect(_tmp_uiElement["signal"], _on_settings_value_changed)
-			_tmp_uiElement.reference.initialize(
-				_tmp_uiElement["keyChain"], 
-				DictionaryParsing.get_by_key_chain_safe(_tmp_userSettings, _tmp_uiElement["keyChain"])
-			)
+			if not "callback" in _tmp_uiElement:
+				_tmp_uiElement.reference.connect(_tmp_uiElement["signal"], _on_settings_value_changed)
+
+			else:
+				_tmp_uiElement.reference.connect(_tmp_uiElement["signal"], _tmp_uiElement["callback"])
+
+			if _tmp_uiElement.reference.has_method("initialize"):
+				_tmp_uiElement.reference.initialize(
+					_tmp_uiElement["keyChain"], 
+					DictionaryParsing.get_by_key_chain_safe(_tmp_userSettings, _tmp_uiElement["keyChain"])
+				)
 
 ################################################################################
 #### GODOT RUNTIME FUNCTION OVERRIDES ##########################################

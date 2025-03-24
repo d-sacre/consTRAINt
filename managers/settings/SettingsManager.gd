@@ -36,6 +36,7 @@ const FALLBACK_USER_SETTINGS_FILEPATH : String = CONS_TRAIN_T.CONFIGURATION_FILE
 #### PRIVATE MEMBER VARIABLES ##################################################
 ################################################################################
 var _userSettings : Dictionary = {}
+var _userSettingsDefault : Dictionary = {}
 var _newUpdate : bool = false
 
 ################################################################################
@@ -74,10 +75,13 @@ func _update() -> void:
 				_tmp_debugRootNode.add_child(_tmp_newDebugElement.instantiate())
 
 func _initialize() -> void:
+	# DESCRIPTION: Load default settings
+	self._userSettingsDefault = FileIO.json.load(self.FALLBACK_USER_SETTINGS_FILEPATH)
+
 	# DESCRIPTION: Checking if user settings file in "user://" space already exists
+	# If not: create a file with the default values
 	if not FileAccess.file_exists(self.USER_SETTINGS_FILEPATH):
-		var _default_data = FileIO.json.load(self.FALLBACK_USER_SETTINGS_FILEPATH)
-		FileIO.json.save(self.USER_SETTINGS_FILEPATH, _default_data)
+		FileIO.json.save(self.USER_SETTINGS_FILEPATH, self._userSettingsDefault)
 	
 	# DESCRIPTION: Loading user settings file from "user://" space
 	self._userSettings = FileIO.json.load(self.USER_SETTINGS_FILEPATH)
@@ -113,7 +117,7 @@ func update_user_settings(keyChain : Array, value) -> void:
 			_tmp_keyChain.append(keyChain[_i])
 
 		AudioManager.set_bus_level(_tmp_keyChain, value)
-	
+		
 	self._update()
 	
 func get_user_settings() -> Dictionary:
@@ -121,6 +125,12 @@ func get_user_settings() -> Dictionary:
 
 func get_user_setting_by_key_chain_safe(keyChain : Array):
 	return DictionaryParsing.get_by_key_chain_safe(self._userSettings, keyChain)
+
+func get_user_settings_default() -> Dictionary:
+	return self._userSettingsDefault
+
+func get_user_setting_default_by_key_chain_safe(keyChain : Array):
+	return DictionaryParsing.get_by_key_chain_safe(self._userSettingsDefault, keyChain)
 
 ################################################################################
 #### SIGNAL HANDLING ###########################################################

@@ -3,7 +3,7 @@
         "background": {
             "open_fields": {
                 "fp": "res://scenes/game/open/assets/audio/sfx/consTRAINt_game_openFields_ambience_background.wav",
-                "volume_db": -6,
+                "volume_db": 0,
                 "playing": false,
                 "autoplay": false,
                 "loop": true,
@@ -13,7 +13,7 @@
         "train": {
             "rolling": {
                 "fp": "res://scenes/game/shared/assets/audio/sfx/consTRAINt_game_ambience_train_rolling.wav",
-                "volume_db": -12,
+                "volume_db": 0,
                 "playing": false,
                 "autoplay": false,
                 "loop": true,
@@ -21,7 +21,7 @@
             },
             "engine": {
                 "fp": "res://scenes/game/vehicles/railcar/assets/audio/sfx/consTRAINt_game_ambience_train_engine.wav",
-                "volume_db": -12,
+                "volume_db": -6,
                 "playing": false,
                 "autoplay": false,
                 "loop": true,

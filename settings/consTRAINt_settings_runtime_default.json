@@ -11,7 +11,7 @@
             "ambience": 50, 
             "game": 100
         },
-        "music": 50
+        "music": 100
     },
     "visual": {
         "fullscreen": false,
