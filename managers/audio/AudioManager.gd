@@ -75,6 +75,9 @@ func _add_and_configure_meta_player(database : Dictionary, audioID : Array, pare
 
 		var _tmp_data : Dictionary = {"reference": _tmp_metaPlayer}
 
+		for _key in data:
+			_tmp_data[_key] = data[_key]
+
 		DictionaryParsing.set_by_key_chain_safe(database, audioID, _tmp_data)
 
 		# if "children" in data:
@@ -108,6 +111,27 @@ func _add_and_configure_meta_player(database : Dictionary, audioID : Array, pare
 					_tmp_keyChain,
 					_tmp_data
 				)
+
+func _configure_meta_player_transitions(data : Dictionary, pruned : Dictionary = {}) -> void:
+	if pruned == {}:
+		pruned = data.duplicate()
+
+	if "reference" in pruned:
+		if "transitions" in pruned:
+			if pruned["transitions"] != []:
+				for _transition in pruned["transitions"]:
+					var _tmp_transition : transition_rule = transition_rule.new()
+					_tmp_transition.target_player = (DictionaryParsing.get_by_key_chain_safe(data, _transition["to"])).reference.get_path()
+					_tmp_transition.transition_type = _transition["type"]
+					_tmp_transition.signal_node = pruned.reference.get_path()
+					# _tmp_transition.signal_name = "finished"
+
+					pruned.reference.transition_rules.append(_tmp_transition)
+
+	else:
+		for _key in pruned:
+			var _tmp_data : Dictionary = pruned[_key]
+			self._configure_meta_player_transitions(data, _tmp_data)
 
 ################################################################################
 #### PUBLIC MEMBER FUNCTIONS ###################################################
@@ -159,6 +183,9 @@ func _ready() -> void:
 		var _tmp_data : Dictionary = _tmp_musicDB[_musicID]
 
 		self._add_and_configure_meta_player(self._musicManager._musicDB, [_musicID], self._musicManager, [_musicID], _tmp_data)
+
+	# DESCRIPTION: Initialize music transitions
+	self._configure_meta_player_transitions(self._musicManager._musicDB)
 
 	# DESCRIPTION: Load all the sound effects 
 	# REMARK: Not very efficient. Should be adapted to only load what is actually

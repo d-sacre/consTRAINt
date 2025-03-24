@@ -178,8 +178,6 @@ func add_trans_buffer(player : meta_player, type : String):
 	assert(player, str("A transition was attempted by %s, but the transition has no target." % name))
 	trans_buffer = {"player": player,
 					"type": type}
-					
-	print("Add trans buffer: ", trans_buffer)
 
 func check_buffer(type : String):
 	if trans_buffer == {}: return false
@@ -275,7 +273,6 @@ func on_beat(b):
 func end():
 	self.finished.emit()
 	var trans : bool = check_buffer("At End")
-	print("End function: trans buffer: ", trans)
 	if trans:
 		transition()
 		return

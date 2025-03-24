@@ -1,14 +1,80 @@
 {
     "themeLight": {
-        "fp": "res://globalAssets/music/consTRAINt_mainTheme_test1.mp3",
-        "volume_db": -6,
-        "playing": false,
-        "autoplay": false,
-        "loop": true,
-        "bpm": 85,
-        "beats_per_bar": 4,
-        "bars": 16,
-        "bus": "Music", 
-        "children": {}
+        "var1":{
+                "fp": "res://globalAssets/music/consTRAINt_themeLight_var1.wav",
+                "volume_db": -6,
+                "playing": false,
+                "autoplay": false,
+                "loop": false,
+                "bpm": 85,
+                "beats_per_bar": 4,
+                "bars": 16,
+                "bus": "Music", 
+                "children": {},
+                "transitions": [
+                    {
+                        "to": ["themeLight", "var2"],
+                        "type": "At End",
+                        "signal_name": "finished"
+                    }
+                ]
+        },
+        "var2":{
+            "fp": "res://globalAssets/music/consTRAINt_themeLight_var2.wav",
+            "volume_db": -6,
+            "playing": false,
+            "autoplay": false,
+            "loop": false,
+            "bpm": 85,
+            "beats_per_bar": 4,
+            "bars": 16,
+            "bus": "Music", 
+            "children": {},
+            "transitions": [
+                {
+                    "to": ["themeLight", "var3"],
+                    "type": "At End",
+                    "signal_name": "finished"
+                }
+            ]
+        },
+        "var3":{
+            "fp": "res://globalAssets/music/consTRAINt_themeLight_var4.wav",
+            "volume_db": -6,
+            "playing": false,
+            "autoplay": false,
+            "loop": false,
+            "bpm": 85,
+            "beats_per_bar": 4,
+            "bars": 16,
+            "bus": "Music", 
+            "children": {},
+            "transitions": [
+                {
+                    "to": ["themeLight", "var4"],
+                    "type": "At End",
+                    "signal_name": "finished"
+                }
+            ]
+        },
+        "var4":{
+            "fp": "res://globalAssets/music/consTRAINt_themeLight_var4.wav",
+            "volume_db": -6,
+            "playing": false,
+            "autoplay": false,
+            "loop": false,
+            "bpm": 85,
+            "beats_per_bar": 4,
+            "bars": 16,
+            "bus": "Music", 
+            "children": {},
+            "transitions": [
+                {
+                    "to": ["themeLight", "var1"],
+                    "type": "At End",
+                    "signal_name": "finished"
+                }
+            ]
+        }
     }
 }

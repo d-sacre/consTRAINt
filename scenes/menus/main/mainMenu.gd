@@ -106,5 +106,5 @@ func _ready() -> void:
 	TransitionManager.transition_finished.connect(self._on_transition_finished)
 	SettingsManager.force_update()
 
-	if not AudioManager.is_song_playing_by_key_chain(["themeLight"]):
-		AudioManager.play_song_by_key_chain(["themeLight"])
+	if not AudioManager.is_song_playing_by_key_chain(["themeLight", "var1"]):
+		AudioManager.play_song_by_key_chain(["themeLight", "var1"])

@@ -23,8 +23,8 @@ func _ready() -> void:
 	self._inGameMenu.menu_visibility_changed.connect(self._on_menu_visibility_changed)
 	SettingsManager.force_update()
 
-	if not AudioManager.is_song_playing_by_key_chain(["themeLight"]):
-		AudioManager.play_song_by_key_chain(["themeLight"])
+	if not AudioManager.is_song_playing_by_key_chain(["themeLight", "var1"]):
+		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
 	AudioManager.play_sfx(["ambience", "background", "open_fields"])
 	AudioManager.play_sfx(["ambience", "train", "rolling"])
 	AudioManager.play_sfx(["ambience", "train", "engine"])
