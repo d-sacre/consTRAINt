@@ -88,6 +88,7 @@ var short := false
 var precision_margin := 0.02
 
 var mplaying : bool = false
+var _lastPlayingStatus : bool = false
 
 signal beat ## Emitted every beat during playback.
 signal bar ## Emitted at the start of each bar during playback.
@@ -177,6 +178,8 @@ func add_trans_buffer(player : meta_player, type : String):
 	assert(player, str("A transition was attempted by %s, but the transition has no target." % name))
 	trans_buffer = {"player": player,
 					"type": type}
+					
+	print("Add trans buffer: ", trans_buffer)
 
 func check_buffer(type : String):
 	if trans_buffer == {}: return false
@@ -270,7 +273,9 @@ func on_beat(b):
 		on_start()
 		
 func end():
+	self.finished.emit()
 	var trans : bool = check_buffer("At End")
+	print("End function: trans buffer: ", trans)
 	if trans:
 		transition()
 		return
