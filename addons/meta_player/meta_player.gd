@@ -284,9 +284,9 @@ func mstop():
 	if get_child_count() > 0:
 		stop_group()
 	else:
-		var t = create_tween()
-		t.tween_property(copy, 'volume_db', -70, 0.6)
-		await t.finished
+		#var t = create_tween()
+		#t.tween_property(copy, 'volume_db', -70, 0.6)
+		#await t.finished
 		if copy:
 			copy.queue_free()
 

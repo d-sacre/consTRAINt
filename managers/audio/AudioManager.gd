@@ -172,6 +172,12 @@ func fade_out_master() -> void:
 	)
 	await t.finished
 
+func fade_out_and_stop_all_playing() -> void:
+	self.fade_out_master()
+	self._musicManager.stop_everything()
+	self._sfxManager.stop_everything()
+	self.set_bus_level(["master"], SettingsManager.get_user_setting_by_key_chain_safe(["volume", "master"]))
+
 func _ready() -> void:
 
 	# DESCRIPTION: Load all the music 

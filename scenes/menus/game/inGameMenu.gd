@@ -48,6 +48,7 @@ func _on_resume_pressed() -> void:
 	self.menu_visibility_changed.emit(self.visible)
 
 func _on_exit_to_main_menu_pressed() -> void:
+	AudioManager.fade_out_and_stop_all_playing()
 	TransitionManager.transition_to_scene(CONS_TRAIN_T.SCENES.MAIN_MENU.PATH)
 
 func _on_exit_to_system_pressed() -> void:

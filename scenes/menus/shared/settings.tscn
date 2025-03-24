@@ -57,9 +57,9 @@ layout_mode = 2
 layout_mode = 2
 bbcode_enabled = true
 text = "[font_size=24][b]Controls[/b][/font_size]
-Fullscreen:  [bgcolor=black]F[/bgcolor]
-Menu/Cancel:  [bgcolor=black]ESC[/bgcolor],  [bgcolor=black]BACKSPACE[/bgcolor],  [bgcolor=black]RMB[/bgcolor]
-Toggle Debug: [bgcolor=black]P[/bgcolor]
+Fullscreen:  F
+Menu/Cancel:  ESC,  BACKSPACE,  RMB
+Toggle Debug: P
 "
 fit_content = true
 
@@ -85,6 +85,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="resetAudio" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/audio/VBoxContainer/HBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "Reset"
