@@ -47,6 +47,25 @@ func is_key_chain_valid(dict : Dictionary, keyChain : Array) -> bool:
 	else:
 		return true
 
+## iterates recursively over all keys found in the [code]dict[code] input [code]Dictionary[/code] 
+## and appends all valid key chains to the [code]result[/code]
+## key chain data base of type [code]Array[Array][/code].
+func find_all_key_chains(dict : Dictionary, result : Array[Array], currentRoot : Array = []) -> void:
+	for _key in dict:
+		var _tmp_data = dict[_key]
+
+		if typeof(_tmp_data) == TYPE_DICTIONARY:
+			var _tmp_newRoot : Array = currentRoot.duplicate()
+			_tmp_newRoot.append(_key)
+
+			self.find_all_key_chains(_tmp_data, result, _tmp_newRoot)
+
+		else:
+			var _tmp_result : Array = currentRoot.duplicate()
+			_tmp_result.append(_key)
+
+			result.append(_tmp_result)
+
 ## gets an element of the [code]Dictionary[/code] by recursively
 ## iterating over the keys provided in the [code]keyChain[/code] and returns its
 ## value. If the [code]keyChain[/code] is invalid in any form, it will throw an
