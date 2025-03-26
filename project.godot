@@ -21,8 +21,8 @@ FileIO="*res://utils/FileIO.gd"
 DictionaryParsing="*res://utils/DictionaryParsing.gd"
 TransitionManager="*res://managers/transition/TransitionManager.tscn"
 WindowManager="*res://managers/window/WindowManager.gd"
-SettingsManager="*res://managers/settings/SettingsManager.tscn"
 AudioManager="*res://managers/audio/AudioManager.tscn"
+SettingsManager="*res://managers/settings/SettingsManager.tscn"
 
 [display]
 

@@ -86,6 +86,8 @@ func _initialize() -> void:
 	# DESCRIPTION: Loading user settings file from "user://" space
 	self._userSettings = FileIO.json.load(self.USER_SETTINGS_FILEPATH)
 
+	AudioManager.set_bus_levels((self.get_user_settings())["volume"])
+
 	self._update()
 
 ################################################################################
@@ -116,7 +118,7 @@ func update_user_settings(keyChain : Array, value) -> void:
 		for _i in range(1, len(keyChain)):
 			_tmp_keyChain.append(keyChain[_i])
 
-		AudioManager.set_bus_level(_tmp_keyChain, value)
+		AudioManager.set_bus_level_by_key_chain(_tmp_keyChain, value)
 		
 	self._update()
 	

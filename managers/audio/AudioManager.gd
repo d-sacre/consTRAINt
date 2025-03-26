@@ -33,14 +33,25 @@ var _busAliasLUT : Dictionary = {
 	"music":  "Music"
 }
 
+var _busAliasKeyChainLUT : Dictionary = {}
+
 var _playingAllowed : bool = true
 
+################################################################################
+#### EXPORT MEMBER VARIABLES ###################################################
+################################################################################
 @export var _sfxDatabaseFilePath : String = CONS_TRAIN_T.CONFIGURATION_FILES.AUDIO.SFX.PATH
 @export var _musicDatabaseFilePath : String = CONS_TRAIN_T.CONFIGURATION_FILES.AUDIO.MUSIC.PATH
 
+################################################################################
+#### ONREADY MEMBER VARIABLES ##################################################
+################################################################################
 @onready var _sfxManager := $sfxManager
 @onready var _musicManager := $musicManager
 
+################################################################################
+#### PRIVATE MEMBER FUNCTIONS ##################################################
+################################################################################
 func _add_and_configure_meta_player(database : Dictionary, audioID : Array, parent : Node, keyChainParent : Array, data : Dictionary):
 	# DESCRIPTION: If the data passed to the method is an sound and not a (sub)category
 	# REMARK: Decision based upon whether the key "fp" exists
@@ -136,11 +147,21 @@ func _configure_meta_player_transitions(data : Dictionary, pruned : Dictionary =
 ################################################################################
 #### PUBLIC MEMBER FUNCTIONS ###################################################
 ################################################################################
-func set_bus_level(keyChain : Array, value : float) -> void:
-	var _tmp_busName = DictionaryParsing.get_by_key_chain_safe(self._busAliasLUT, keyChain)
+func set_bus_level(busName : String, value : float) -> void:
 	var _tmp_decibel = linear_to_db(value/100)
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(busName), _tmp_decibel)
 
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(_tmp_busName), _tmp_decibel)
+func set_bus_level_by_key_chain(keyChain : Array, value : float) -> void:
+	var _tmp_busName = DictionaryParsing.get_by_key_chain_safe(self._busAliasLUT, keyChain)
+	self.set_bus_level(_tmp_busName, value)
+
+func set_bus_levels(data : Dictionary) -> void:
+	for _busName in self._busAliasKeyChainLUT:
+		var _tmp_keyChain : Array = self._busAliasKeyChainLUT[_busName]
+
+		if DictionaryParsing.is_key_chain_valid(data, _tmp_keyChain):
+			var _tmp_value = DictionaryParsing.get_by_key_chain_safe(data, _tmp_keyChain)
+			self.set_bus_level(_busName, _tmp_value)
 
 func enable_request_processing() -> void:
 	self._playingAllowed = true
@@ -176,9 +197,17 @@ func fade_out_and_stop_all_playing() -> void:
 	self.fade_out_master()
 	self._musicManager.stop_everything()
 	self._sfxManager.stop_everything()
-	self.set_bus_level(["master"], SettingsManager.get_user_setting_by_key_chain_safe(["volume", "master"]))
+	self.set_bus_level_by_key_chain(["master"], SettingsManager.get_user_setting_by_key_chain_safe(["volume", "master"]))
 
 func _ready() -> void:
+	# DESCRIPTION: Create the bus alias key chain LUT
+	var _tmp_keyChains : Array[Array] = []
+
+	DictionaryParsing.find_all_key_chains(self._busAliasLUT, _tmp_keyChains)
+
+	for _keyChain in _tmp_keyChains:
+		var _tmp_newKey : String = DictionaryParsing.get_by_key_chain_safe(self._busAliasLUT, _keyChain)
+		self._busAliasKeyChainLUT[_tmp_newKey] = _keyChain
 
 	# DESCRIPTION: Load all the music 
 	# REMARK: Not very efficient. Should be adapted to only load what is actually

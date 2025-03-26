@@ -34,12 +34,21 @@ var _error : int = self.ERROR_CODES.NO_ERROR
 func is_key_chain_valid(dict : Dictionary, keyChain : Array) -> bool:
 	if len(keyChain) != 0:
 		var _tmp_key = keyChain[0]
-		if  _tmp_key in dict:
+
+		if _tmp_key in dict:
 			var _tmp_keyChain = keyChain.duplicate()
 			_tmp_keyChain.remove_at(0)
-			var _tmp_dict = dict[_tmp_key]
 
-			return self.is_key_chain_valid(_tmp_dict, _tmp_keyChain)
+			if len(_tmp_keyChain) != 0:
+				var _tmp_data = dict[_tmp_key]
+
+				if typeof(_tmp_data) == TYPE_DICTIONARY:
+					return self.is_key_chain_valid(_tmp_data, _tmp_keyChain)
+
+				else:
+					return false
+			else:
+				return true
 
 		else:
 			return false
