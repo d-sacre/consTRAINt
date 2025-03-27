@@ -108,10 +108,8 @@ func _ready() -> void:
 	TransitionManager.transition_finished.connect(self._on_transition_finished)
 	SettingsManager.force_update()
 
-	if not AudioManager.is_song_playing_by_key_chain(["themeLight", "var1"]):
+	if not AudioManager.is_any_music_playing():
 		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
-
-	print("Master Volume:", SettingsManager.get_user_setting_by_key_chain_safe(["volume", "master"]))
 
 # func _process(_delta : float) -> void:
 # 	if not AudioManager.is_song_playing_by_key_chain(["themeLight", "var1"]):

@@ -35,6 +35,11 @@ var _busAliasLUT : Dictionary = {
 
 var _busAliasKeyChainLUT : Dictionary = {}
 
+var _metaPlayerValidKeys : Array = [
+	"fp", "volume_db", "loop", "bus", "bpm", "beats_per_bar", "bars", "reference",
+	"autoplay", "transitions", "playing", "children"
+]
+
 var _playingAllowed : bool = true
 
 ################################################################################
@@ -176,6 +181,9 @@ func play_sfx(keyChain : Array) -> void:
 func is_song_playing_by_key_chain(keyChain : Array) -> bool:
 	return self._musicManager.is_song_playing_by_key_chain(keyChain)
 
+func is_any_music_playing() -> bool:
+	return self._musicManager.is_any_music_playing()
+
 func play_song_by_key_chain(keyChain : Array) -> void:
 	if self._playingAllowed:
 		self._musicManager.request_song_by_key_chain(keyChain)
@@ -221,6 +229,7 @@ func _ready() -> void:
 
 	# DESCRIPTION: Initialize music transitions
 	self._configure_meta_player_transitions(self._musicManager._musicDB)
+	self._musicManager.initialize()
 
 	# DESCRIPTION: Load all the sound effects 
 	# REMARK: Not very efficient. Should be adapted to only load what is actually
