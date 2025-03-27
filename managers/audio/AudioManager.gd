@@ -188,24 +188,34 @@ func play_song_by_key_chain(keyChain : Array) -> void:
 	if self._playingAllowed:
 		self._musicManager.request_song_by_key_chain(keyChain)
 
-func fade_out_master() -> void:
-	var _tmp_busIndex : int = AudioServer.get_bus_index("Master")
+func fade_bus_from_current_level_to(busName : String, value: float, duration : float = 2) -> void:
+	var _tmp_busIndex : int = AudioServer.get_bus_index(busName)
 	var _tmp_volume : float = AudioServer.get_bus_volume_db(_tmp_busIndex)
+	var _tmp_decibel = linear_to_db(value/100)
 	var t = create_tween()
 
 	t.tween_method(
 		AudioServer.set_bus_volume_db.callv, 
 		[_tmp_busIndex,_tmp_volume],
-		[_tmp_busIndex, -90],
-		2
+		[_tmp_busIndex, _tmp_decibel],
+		duration
 	)
 	await t.finished
+	t.kill()
+
+func fade_out_master(duration : float = 2) -> void:
+	await self.fade_bus_from_current_level_to("Master", 0.01, duration)
 
 func fade_out_and_stop_all_playing() -> void:
-	self.fade_out_master()
+	# REMARK: Issue why no audio would play after switching seems to be caused by
+	# the await not blocking the setting of the new bus level, so that it would be
+	# overwritten and therefor no audio would play
+	# TODO: Transition sounds a bit harsh, therefor another attempt with fading 
+	# should be started
+	# await self.fade_out_master()
 	self._musicManager.stop_everything()
 	self._sfxManager.stop_everything()
-	self.set_bus_level_by_key_chain(["master"], SettingsManager.get_user_setting_by_key_chain_safe(["volume", "master"]))
+	# self.set_bus_level_by_key_chain(["master"], SettingsManager.get_user_setting_by_key_chain_safe(["volume", "master"]))
 
 func _ready() -> void:
 	# DESCRIPTION: Create the bus alias key chain LUT
@@ -242,3 +252,5 @@ func _ready() -> void:
 		var _tmp_data : Dictionary = _tmp_sfxDB[_sfxID]
 
 		self._add_and_configure_meta_player(self._sfxManager._sfxDB, _tmp_keyChain, _tmp_parent, _tmp_keyChain, _tmp_data)
+
+	self._sfxManager.initialize()

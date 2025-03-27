@@ -7,17 +7,6 @@ var _musicDB : Dictionary = {}
 var _musicKeyChainTable : Array[Array] = []
 
 ################################################################################
-#### PRIVATE MEMBER FUNCTIONS ##################################################
-################################################################################
-func _walk_db_and_stop_everything(data : Dictionary):
-	if "reference" in data:
-		data["reference"].mstop()
-
-	else:
-		for _key in data:
-			self._walk_db_and_stop_everything(data[_key])
-
-################################################################################
 #### PUBLIC MEMBER FUNCTIONS ###################################################
 ################################################################################
 func initialize() -> void:
@@ -57,8 +46,6 @@ func is_any_music_playing() -> bool:
 		if self.is_song_playing_by_key_chain(_keyChain):
 			_tmp_checkSum += 1
 
-	# print("Music playing checksum: ", _tmp_checkSum)
-
 	if _tmp_checkSum != 0:
 		return true
 
@@ -67,7 +54,10 @@ func is_any_music_playing() -> bool:
 func request_song_by_key_chain(keyChain : Array) -> void:
 	var _tmp_data : Dictionary = DictionaryParsing.get_by_key_chain_safe(self._musicDB, keyChain)
 	_tmp_data.reference.mplay()
-	# print("Song: ", keyChain, " has volume: ", _tmp_data.reference.volume_db, " db")
 
 func stop_everything() -> void:
-	self._walk_db_and_stop_everything(self._musicDB)
+	for _keyChain in self._musicKeyChainTable:
+		var _tmp_song : Dictionary = DictionaryParsing.get_by_key_chain_safe(self._musicDB, _keyChain)
+		
+		if _tmp_song.reference.mplaying:
+			_tmp_song.reference.mstop()
