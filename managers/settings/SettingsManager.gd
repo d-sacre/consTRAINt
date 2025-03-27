@@ -38,6 +38,7 @@ const FALLBACK_USER_SETTINGS_FILEPATH : String = CONS_TRAIN_T.CONFIGURATION_FILE
 var _userSettings : Dictionary = {}
 var _userSettingsDefault : Dictionary = {}
 var _newUpdate : bool = false
+var _lastFullscreenStatus : bool = false
 
 ################################################################################
 #### PRIVATE MEMBER FUNCTIONS ##################################################
@@ -47,16 +48,22 @@ func _update() -> void:
 	self.save_user_settings()
 
 	# DESCRIPTION: Set the window mode to match the user setting
+	# REMARK: Querrying the last fullscreen status not only reduces the amount
+	# of function calls, but is also a second safety layer to reduce the risk of 
+	# accidentally resetting the window mode and creating visual glitches.
 	# REMARK: Not the best idea to use Window Manager functions directly. 
 	# At least from an architectural standpoint due to entanglement between 
 	# AutoLoads. Sending a "signal" by using Input Event to change the window
 	# mode does only work once. Afterwards, it is ignored for no obvious reason
 	# Perhaps due to not having cleared the variable before reusing it.
-	if self._userSettings["visual"]["fullscreen"]:
-		WindowManager.set_fullscreen()
+	if self._lastFullscreenStatus != self._userSettings["visual"]["fullscreen"]:
+		if self._userSettings["visual"]["fullscreen"]:
+			WindowManager.set_fullscreen()
 
-	else:
-		WindowManager.set_windowed()
+		else:
+			WindowManager.set_windowed()
+
+		self._lastFullscreenStatus = self._userSettings["visual"]["fullscreen"]
 
 	# DESCRIPTION: Verify if a current scene exists and add/remove debug elements
 	# according to user settings
@@ -86,7 +93,18 @@ func _initialize() -> void:
 	# DESCRIPTION: Loading user settings file from "user://" space
 	self._userSettings = FileIO.json.load(self.USER_SETTINGS_FILEPATH)
 
+	# DESCRIPTION: Set audio bus levels
+	# REMARK: Just a precaution, because initialization of the settings menu should 
+	# already take care of that. However, it occured a bug that a slider set to 
+	# zero would visually display that value, but the corresponding bus would be
+	# on full volume
 	AudioManager.set_bus_levels((self.get_user_settings())["volume"])
+
+	# DESCRIPTION: Set the last fullscreen status
+	# REMARK: Required to bypass the safety in self._update() that requires
+	# both of the values have to be different. Bypassing this safety during the 
+	# initialization ensures that the correct window mode will be set.
+	self._lastFullscreenStatus = !self._userSettings["visual"]["fullscreen"]
 
 	self._update()
 
