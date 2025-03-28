@@ -84,7 +84,16 @@ func _add_and_configure_meta_player(database : Dictionary, audioID : Array, pare
 			var _tmp_duration : float = _tmp_metaPlayer.stream.get_length() 
 
 			_tmp_metaPlayer.beats_per_bar = 4
-			_tmp_metaPlayer.bars = floor(_tmp_duration/_tmp_metaPlayer.beats_per_bar)
+			_tmp_metaPlayer.bars = 1
+
+			var _tmp_bars : int = floor(_tmp_duration/_tmp_metaPlayer.beats_per_bar)
+
+			# DESCRIPTION: Take into account very short audio files, e.g. SFX, where 
+			# the total number of bars is under 1. Only use calculated number of bars
+			# when greater than 1
+			if _tmp_bars > 1:
+				_tmp_metaPlayer.bars = _tmp_bars
+
 			_tmp_metaPlayer.tempo = (_tmp_metaPlayer.beats_per_bar * _tmp_metaPlayer.bars) / (_tmp_duration/60) 
 
 		parent.add_child(_tmp_metaPlayer)
