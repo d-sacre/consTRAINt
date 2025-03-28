@@ -63,8 +63,6 @@ func _on_transition_finished() -> void:
 
 func _on_play_button_pressed() -> void:
 	TransitionManager.transition_to_scene(_playButtonScene)
-	if not AudioManager.is_song_playing_by_key_chain(["themeLight", "var1"]):
-		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
 
 func _on_settings_button_pressed() -> void:
 	self._settings.visible = !self._settings.visible
@@ -110,8 +108,3 @@ func _ready() -> void:
 
 	if not AudioManager.is_any_music_playing():
 		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
-
-# func _process(_delta : float) -> void:
-# 	if not AudioManager.is_song_playing_by_key_chain(["themeLight", "var1"]):
-# 		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
-# 		self.set_process(false)
