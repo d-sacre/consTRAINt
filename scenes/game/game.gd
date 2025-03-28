@@ -36,5 +36,4 @@ func _ready() -> void:
 
 	# DESCRIPTION: Start the music playback only if no other song is already playing
 	if not AudioManager.is_any_music_playing():
-		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
-	
+		AudioManager.play_song_by_key_chain(["themeLight", "var1"])		

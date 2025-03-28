@@ -96,7 +96,6 @@ func _on_reset_audio_to_default() -> void:
 	SettingsManager.reset_audio_levels_to_default()
 
 func _on_settings_value_changed(keyChain : Array, value) -> void:
-	print_debug("Settings Context: User changed settings: ", keyChain, ", ", value)
 	SettingsManager.set_user_setting_by_key_chain_safe(keyChain, value)
 
 func _on_settings_manager_update() -> void:

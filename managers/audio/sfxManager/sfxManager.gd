@@ -31,7 +31,7 @@ func initialize() -> void:
 	# sure that each song is only added once
 	self._sfxKeyChainTable = []
 
-	for _keyChain in _tmp_keyChainTableFiltered:
+	for _keyChain in _tmp_keyChainTableFiltered: 
 		if not _keyChain in  self._sfxKeyChainTable:
 			self._sfxKeyChainTable.append(_keyChain)
 

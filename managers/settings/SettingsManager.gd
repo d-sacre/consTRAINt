@@ -7,7 +7,6 @@ extends Node
 ################################################################################
 ################################################################################
 ################################################################################
-
 signal update
 
 ################################################################################
@@ -143,7 +142,7 @@ func _initialize() -> void:
 	# DESCRIPTION: Checking if user settings file in "user://" space already exists
 	# If not: create a file with the default values
 	if not FileAccess.file_exists(self.USER_SETTINGS_FILEPATH):
-		FileIO.json.save(self.USER_SETTINGS_FILEPATH, self._userSettingsDefault.duplicate())
+		FileIO.json.save(self.USER_SETTINGS_FILEPATH, self._userSettingsDefault)
 	
 	# DESCRIPTION: Loading user settings file from "user://" space
 	self._userSettings = FileIO.json.load(self.USER_SETTINGS_FILEPATH)
@@ -192,37 +191,24 @@ func set_user_settings(data : Dictionary, root : Array = []) -> void:
 func set_user_setting_by_key_chain_safe(keyChain : Array, value) -> void:
 	var _audioLevelChange : Dictionary = {}
 
-	print_debug("default before: ", self.get_user_setting_default_by_key_chain_safe(["volume"]))
 	DictionaryParsing.set_by_key_chain_safe(self._userSettings, keyChain, value)
-	print_debug("default after: ", self.get_user_setting_default_by_key_chain_safe(["volume"]))
 
 	# DESCRIPTION: Determine if an audio (volume) setting was changed and
 	# if so, prepare the key chain for the audio manager and set the audio
 	# setting changed flag to true
 	if keyChain[0] == "volume": 
 		self._update_audio_settings_change_key_chain_table(keyChain)
-		# var _tmp_keyChain : Array = []
-
-		# for _i in range(1, len(keyChain)):
-		# 	_tmp_keyChain.append(keyChain[_i])
-
-		# self._audioSettingsChangeKeyChainTable.append(
-		# 	{
-		# 		"settings": keyChain,
-		# 		"audio": _tmp_keyChain
-		# 	}
-		# )
-		# self._audioSettingChanged = true
 		
 	self._update()
 
 func reset_audio_levels_to_default() -> void:
-	print_debug("reset audio levels to default")
-	print_debug("default: before: ", self.get_user_setting_default_by_key_chain_safe(["volume"]))
-	print("setting: before: ", self.get_user_setting_by_key_chain_safe(["volume"]))
-
+	# DESCRIPTION: Copy default values to current settings
+	# REMARK: duplicate() is of upmost importance here; otherwise, the default values 
+	# will be overwritten! Since the data is also nested, deep copy has to be true. Otherwise
+	# deeper nested objects will not be copied, but used as a reference, which causes 
+	# a partial overwrite of the default settings.
 	var _tmp_audioSettingsDefault : Dictionary = self.get_user_setting_default_by_key_chain_safe(["volume"])
-	self.set_user_settings(_tmp_audioSettingsDefault.duplicate(), ["volume"])
+	self.set_user_settings(_tmp_audioSettingsDefault.duplicate(true), ["volume"])
 
 	# DESCRIPTION: Find all the relevant key chains and add them to the audio
 	# settings key chain table
@@ -231,9 +217,7 @@ func reset_audio_levels_to_default() -> void:
 			self._update_audio_settings_change_key_chain_table(_keyChain)
 
 	self._update()
-	print_debug("default: after: ", self.get_user_setting_default_by_key_chain_safe(["volume"]))
-	print_debug("setting: after: ", self.get_user_setting_by_key_chain_safe(["volume"]))
-	
+
 func get_user_settings() -> Dictionary:
 	return self._userSettings
 
@@ -245,13 +229,6 @@ func get_user_settings_default() -> Dictionary:
 
 func get_user_setting_default_by_key_chain_safe(keyChain : Array):
 	return DictionaryParsing.get_by_key_chain_safe(self._userSettingsDefault, keyChain)
-
-################################################################################
-#### SIGNAL HANDLING ###########################################################
-################################################################################
-# func _on_user_settings_changed(keyChain : Array, value) -> void:
-# 	print_debug("Settings Manager: on settings changed")
-# 	self.set_user_setting_by_key_chain_safe(keyChain, value)
 
 ################################################################################
 #### GODOT LOADTIME FUNCTION OVERRIDES #########################################
