@@ -18,7 +18,7 @@ extends Control
 ################################################################################
 #### CONSTANT DEFINITIONS ######################################################
 ################################################################################
-const _uiElementsRootPath : String = "PanelContainer/MarginContainer/VBoxContainer/"
+const _uiElementsRootPath : String = "VBoxContainer/"
 
 ################################################################################
 #### ONREADY MEMBER VARIABLES ##################################################
@@ -104,10 +104,6 @@ func _on_settings_manager_update() -> void:
 
 	for _uiElementID in _uiElementLUT:
 		var _tmp_elementType : String = self._uiElementLUT[_uiElementID]["type"]
-
-		# self._uiElementLUT[_uiElementID].reference.update_display(
-		# 	SettingsManager.get_user_setting_by_key_chain_safe(self._uiElementLUT[_uiElementID]["keyChain"])
-		# )
 
 		match _tmp_elementType:
 			"checkButton":

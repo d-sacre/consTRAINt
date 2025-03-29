@@ -1,87 +1,75 @@
-extends Control
+extends PanelContainer
 
 ################################################################################
 #### REQUIREMENTS ##############################################################
 ################################################################################
 # This script expects the following AutoLoads:                                 
 # - TransitionManager: res://managers/transition/TransitionManager.tscn
-# - SettingsManager: res://managers/settings/SettingsManager.gd
-#                                                                              
-# This script expects the following Globals:                                   
-# - CONS_TRAIN_T: res://settings/globals.gd
 ################################################################################
 ################################################################################
 ################################################################################
+signal hide_menu
+signal show_settings_context
 
 ################################################################################
 #### CONSTANT DEFINITIONS ######################################################
 ################################################################################
-const _buttonPathRoot : String = "default/buttonCluster/VBoxContainer/"
-
-################################################################################
-#### PRIVATE MEMBER VARIABLES ##################################################
-################################################################################
-@export var _playButtonScene : String = CONS_TRAIN_T.SCENES.GAME.PATH
+const _buttonPathRoot : String = "MarginContainer/VBoxContainer/"
 
 ################################################################################
 #### ONREADY MEMBER VARIABLES ##################################################
 ################################################################################
 @onready var _buttonLUT : Dictionary = {
-	"play": {
-		"reference":self.get_node(self._buttonPathRoot + "play"),
-		"callback": _on_play_button_pressed,
+	"resume": {
+		"reference": self.get_node(self._buttonPathRoot + "resume"),
+		"callback": _on_resume_pressed,
 		"web": true
 	},
 	"settings": {
-		"reference":self.get_node(self._buttonPathRoot + "settings"),
-		"callback": _on_settings_button_pressed,
+		"reference": self.get_node(self._buttonPathRoot + "settings"),
+		"callback": _on_settings_pressed,
 		"web": true
 	},
-	"credits": {
-		"reference": self.get_node(self._buttonPathRoot + "credits"),
-		"callback": _on_credits_button_pressed,
+	"exitToMainMenu": {
+		"text": "Exit to Main Menu",
+		"reference": self.get_node(self._buttonPathRoot + "exitToMainMenu"),
+		"callback": _on_exit_to_main_menu_pressed,
 		"web": true
 	},
-	"exit": {
-		"reference": self.get_node(self._buttonPathRoot + "exit"),
-		"callback": _on_exit_button_pressed,
+	"exitToSystem": {
+		"text": "Exit to System",
+		"reference": self.get_node(self._buttonPathRoot + "exitToSystem"),
+		"callback": _on_exit_to_system_pressed,
 		"web": false
 	}
 }
 
-@onready var _settings : PanelContainer = $contexts/settings
-@onready var _credits : PanelContainer = $contexts/credits
-
 ################################################################################
 #### SIGNAL HANDLING ###########################################################
 ################################################################################
+func _on_resume_pressed() -> void:
+	visible = false
+	get_tree().paused = false
+	self.hide_menu.emit()
 
-# DESCRIPTION: Force un update of the settings
-# REMARK: Required so that e.g. debug elements are correctly displayed
-func _on_transition_finished() -> void:
-	SettingsManager.force_update()
+func _on_settings_pressed() -> void:
+	self.visible = false
+	self.show_settings_context.emit()
 
-func _on_play_button_pressed() -> void:
-	TransitionManager.transition_to_scene(_playButtonScene)
+func _on_exit_to_main_menu_pressed() -> void:
+	AudioManager.fade_out_and_stop_all_playing()
+	TransitionManager.transition_to_scene(CONS_TRAIN_T.SCENES.MAIN_MENU.PATH)
 
-func _on_settings_button_pressed() -> void:
-	self._settings.visible = !self._settings.visible
-	self._settings.get_node("settingsControls").update_display()
-	self._credits.visible = false
-	
-func _on_credits_button_pressed() -> void:
-	self._credits.visible = !self._credits.visible
-	self._settings.visible = false
-	
-func _on_exit_button_pressed() -> void:
+func _on_exit_to_system_pressed() -> void:
 	TransitionManager.exit_to_system()
 
 ################################################################################
 #### GODOT LOADTIME FUNCTION OVERRIDES #########################################
 ################################################################################
 func _ready() -> void:
-	# DESCRIPTION: Connect all the required button signals to the respective
-	# methods and determine visibilities
+	# DESCRIPTION: Connecting all the buttons to the respective callbacks,
+	# set custom button texts if available and set the visibilty in exports 
+	# correctly
 	for buttonID in self._buttonLUT:
 		var _tmp_button : Dictionary = self._buttonLUT[buttonID]
 
@@ -99,12 +87,6 @@ func _ready() -> void:
 		else:
 			# DESCRIPTION: Connection to the respective callback
 			_tmp_button.reference.pressed.connect(_tmp_button.callback)
-	
-	self._settings.visible = false
-	self._credits.visible = false
 
-	TransitionManager.transition_finished.connect(self._on_transition_finished)
-	SettingsManager.force_update()
-
-	if not AudioManager.is_any_music_playing():
-		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
+	# DESCRIPTION: Ensure that the menu is not visible
+	self.visible = false

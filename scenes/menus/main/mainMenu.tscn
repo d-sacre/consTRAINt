@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://78xf86h7hhmc" path="res://scenes/menus/main/mainMenu.gd" id="2_3cetj"]
 [ext_resource type="Texture2D" uid="uid://ux325trnd4qh" path="res://scenes/menus/main/assets/art/2d/background/consTRAINt_art_menu_main_background.png" id="2_6osn1"]
 [ext_resource type="PackedScene" uid="uid://dpvf6t38iqcp1" path="res://scenes/menus/main/contexts/credits/credits.tscn" id="2_flnah"]
-[ext_resource type="PackedScene" uid="uid://daomsb2254sgq" path="res://scenes/menus/shared/settings.tscn" id="4_340ad"]
+[ext_resource type="PackedScene" uid="uid://domemhpnbbwca" path="res://scenes/menus/main/contexts/settings/settings.tscn" id="5_6osn1"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cpeem"]
 
@@ -119,25 +119,16 @@ mouse_filter = 2
 metadata/_edit_lock_ = true
 
 [node name="credits" parent="contexts" instance=ExtResource("2_flnah")]
+visible = false
 layout_mode = 1
 offset_left = -360.0
 offset_top = -320.0
 offset_right = 360.0
 offset_bottom = 320.0
 
-[node name="settings" parent="contexts" instance=ExtResource("4_340ad")]
-visible = false
+[node name="settings" parent="contexts" instance=ExtResource("5_6osn1")]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_top = -301.5
+offset_bottom = 301.5
 
 [node name="debug" type="CanvasLayer" parent="."]
