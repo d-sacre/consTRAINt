@@ -50,7 +50,7 @@ const _buttonPathRoot : String = "default/buttonCluster/VBoxContainer/"
 }
 
 @onready var _settings : Control = $contexts/settings
-@onready var _credits : RichTextLabel = $contexts/credits
+@onready var _credits : PanelContainer = $contexts/credits
 
 ################################################################################
 #### SIGNAL HANDLING ###########################################################

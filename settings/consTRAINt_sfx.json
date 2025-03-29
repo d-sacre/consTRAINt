@@ -20,12 +20,34 @@
                 "bus": "Ambience"
             },
             "engine": {
-                "fp": "res://scenes/game/vehicles/railcar/assets/audio/sfx/consTRAINt_game_ambience_train_engine.wav",
+                "fp": "res://scenes/game/vehicles/railcar/assets/sfx/consTRAINt_game_ambience_train_engine.wav",
                 "volume_db": -6,
                 "playing": false,
                 "autoplay": false,
                 "loop": true,
                 "bus": "Ambience"
+            }
+        }
+    },
+    "game": {
+        "train": {
+            "horn": {
+                "short": {
+                    "fp": "res://scenes/game/vehicles/railcar/assets/sfx/consTRAINt_game_railcar_horn_short.wav",
+                    "volume_db": -12,
+                    "playing": false,
+                    "autoplay": false,
+                    "loop": false,
+                    "bus": "Game"
+                },
+                "long": {
+                    "fp": "res://scenes/game/vehicles/railcar/assets/sfx/consTRAINt_game_railcar_horn_long.wav",
+                    "volume_db": -12,
+                    "playing": false,
+                    "autoplay": false,
+                    "loop": false,
+                    "bus": "Game"
+                }
             }
         }
     }
