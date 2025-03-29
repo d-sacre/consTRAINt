@@ -13,7 +13,7 @@ extends Node
 #### PRIVATE MEMBER VARIABLES ##################################################
 ################################################################################
 ################################################################################
-var _lastNonFullscreenWindowMode : int = 0
+var _lastNonFullscreenWindowMode : DisplayServer.WindowMode
 
 ################################################################################
 ################################################################################
@@ -58,7 +58,7 @@ func _set_last_non_fullscreen_window_mode(mode : int) -> void:
 #### PUBLIC MEMBER FUNCTIONS ###################################################
 ################################################################################
 ################################################################################
-func get_last_non_fullscreen_window_mode() -> int:
+func get_last_non_fullscreen_window_mode():
 	return self._lastNonFullscreenWindowMode
 
 func is_fullscreen() -> bool:
@@ -81,8 +81,8 @@ func set_windowed() -> void:
 		DisplayServer.window_set_mode(self.get_last_non_fullscreen_window_mode())
 
 func toggle_fullscreen() -> void:
-	var _tmp_currentWindowMode = DisplayServer.window_get_mode()
-	var _tmp_newWindowMode = _tmp_currentWindowMode
+	var _tmp_currentWindowMode : = DisplayServer.window_get_mode()
+	var _tmp_newWindowMode : = _tmp_currentWindowMode
 
 	var _tmp_windowModeLUT : Dictionary = self._get_current_window_mode_bool_lut()
 
