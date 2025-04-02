@@ -1,25 +1,70 @@
 extends Node2D
 
 ################################################################################
+#### CONSTANTS #################################################################
+################################################################################
+class DRAWING_PROGRESS:
+	const RESIZE_FACTOR : float = 1.0/16.0
+	const ALPHA_THRESHOLD : int = 128
+
+################################################################################
+#### INSTANCES AND OBJECTS #####################################################
+################################################################################
+var drawing : Dictionary = {
+	"origin" : Vector2(0,0),
+	"size" : Vector2i(1920, 512),
+	"mouse_limits": {
+		"x_min" : 0.0,
+		"x_max" : 0.0,
+		"y_min" : 0.0,
+		"y_max" : 0.0
+	},
+	"brush": {
+		"width": self._lineWidth,
+		"offsets_from_center": []
+	}
+}
+
+var _convertIndices : ConvertIndices = ConvertIndices.new(1920)
+
+################################################################################
 #### PRIVATE MEMBER VARIABLES ##################################################
 ################################################################################
 var _drawingAllowed : bool = true
 var _lastMousePosition : Vector2 = Vector2.ZERO
 
+var _drawingProgress : float = 0.0
+var _drawingProgressEvaluationTimer = 0
+
+var _contentTexture : CompressedTexture2D
+var _contentNonEmptyCoarseLUT : Array[int] = []
+var _contentNonEmptyCoarseLength : int = 0
+var _contentRevealLUT : Array[int] = []
+
 ################################################################################
 #### EXPORT MEMBER VARIABLES ###################################################
 ################################################################################
+@export var _lineWidth : float = 75.0 
 @export var _pointsMaximum : int = 30
 
 ################################################################################
 #### ONREADY MEMBER VARIABLES ##################################################
 ################################################################################
 @onready var _lineVisual : Line2D = $playerFeedback/lineVisualizer/Line2D
-@onready var _lineTexture : Line2D = $mattePainting/lineVisualizer/Line2D
+@onready var _lineMattePainting : Line2D = $mattePainting/lineVisualizer/Line2D
 @onready var _brush : Node2D = $playerFeedback/brush
 
 @onready var _mattePainting : SubViewport = $mattePainting
-@onready var _mattePersistence : Sprite2D = $mattePainting/mattePersistent
+@onready var _mattePaintingPersistence : Sprite2D = $mattePainting/mattePersistent
+
+@onready var _contentReveal : SubViewport = $contentReveal
+@onready var _contentRevealSprite : Sprite2D = $contentReveal/mask
+
+@onready var _drawingResult : Sprite2D = $drawingResult
+
+@onready var _particleManager : Node2D = $drawingShape/particleManager
+
+@onready var _nextButton : Button = $next
 
 ################################################################################
 #### PRIVATE MEMBER FUNCTIONS ##################################################
@@ -35,16 +80,249 @@ func _manage_line(line : Line2D, newPoint : Vector2, lastPoint : Vector2, remove
 		if newPoint != lastPoint:
 			line.add_point(newPoint)
 
-func _save_to_texture_and_prune() -> Texture2D:
-	# DESCRIPTION: Acquire the current display of the viewport and store it into
-	# a static image texture
-	var _tmp_image : Image = self._mattePainting.get_texture().get_image()
+func _save_to_texture(viewport : SubViewport = self._mattePainting) -> Texture2D:
+	# REMARK: Not working in this use case; stops the complete drawing logic.
+	# await RenderingServer.frame_post_draw 
+	var _tmp_image : Image = viewport.get_texture().get_image()
 	var _tmp_texture : ImageTexture = ImageTexture.create_from_image(_tmp_image)
 
+	return _tmp_texture
+
+func _save_drawing_to_texture_and_prune_line(viewport : SubViewport = self._mattePainting, line : Line2D = self._lineMattePainting) -> Texture2D:
+	# DESCRIPTION: Acquire the current display of the viewport and store it into
+	# a static image texture
+	var _tmp_texture : ImageTexture = self._save_to_texture(viewport)
+
 	# DESCRIPTION: Clear all the points
-	self._lineTexture.points = []
+	line.points = []
 
 	return _tmp_texture
+
+func _clear_matte_painting() -> void:
+	self._lineMattePainting.points = []
+	self._mattePaintingPersistence.texture = null
+
+func _resize(image : Image, factor : float = DRAWING_PROGRESS.RESIZE_FACTOR) -> Image:
+	var _tmp_image : Image = Image.new()
+	var _tmp_size : Vector2i = image.get_size()
+
+	_tmp_image.copy_from(image)
+	_tmp_size = Vector2i(
+		int(float(_tmp_size.x) * factor),
+		int(float(_tmp_size.y) * factor)
+	)
+
+	_tmp_image.resize(_tmp_size.x, _tmp_size.y, Image.Interpolation.INTERPOLATE_NEAREST)
+
+	_tmp_image.save_png("res://resize.png")
+
+	return _tmp_image 
+
+func _convert_image_to_bw_mask_based_on_alpha(image : Image, alpha : int = DRAWING_PROGRESS.ALPHA_THRESHOLD) -> Image:
+	var _tmp_image : Image = Image.new()
+	var _tmp_size : Vector2i = image.get_size()
+
+	_tmp_image.copy_from(image)
+
+	for _x in range(0, _tmp_size.x - 1):
+		for _y in range(0, _tmp_size.y - 1):
+			var _tmp_pixel = _tmp_image.get_pixel(_x, _y)
+
+			if _tmp_pixel.a8 >= alpha:
+				_tmp_image.set_pixel(_x, _y, Color.WHITE)
+			
+			else:
+				_tmp_image.set_pixel(_x, _y, Color.BLACK)
+
+	return _tmp_image
+
+func _create_white_pixel_lut(image : Image) -> Array[int]:
+	var _tmp_lut : Array[int] = []
+	var _tmp_size : Vector2i = image.get_size()
+
+	for _x in range(0, _tmp_size.x - 1):
+		for _y in range(0, _tmp_size.y - 1):
+			var _tmp_pixel = image.get_pixel(_x, _y)
+
+			if _tmp_pixel == Color.WHITE:
+				_tmp_lut.append(self._convertIndices.from_2d_to_1d(Vector2(_x, _y)))
+
+	_tmp_lut.sort()
+
+	return _tmp_lut
+
+func _convert_content_texture_to_non_empty_coarse_lut() -> int:
+	# DESCRIPTION: Load the image
+	var _tmp_image : Image = self._contentTexture.get_image()
+
+	# DESCRIPTION: Convert image to a black and white mask and calculate
+	# its properties
+	var _tmp_bwMask : Image = self._convert_image_to_bw_mask_based_on_alpha(_tmp_image)
+	var _tmp_bwMaskResized : Image = self._resize(_tmp_bwMask)
+	var _tmp_maskSize : Vector2i = _tmp_bwMaskResized.get_size()
+	var _tmp_maskSize1d : int = _tmp_maskSize.x * _tmp_maskSize.y
+
+	# DESCRIPTION: Create the LUT from the mask
+	self._contentNonEmptyCoarseLUT = self._create_white_pixel_lut(_tmp_bwMaskResized)
+	self._contentNonEmptyCoarseLength = len(self._contentNonEmptyCoarseLUT)
+
+	return _tmp_maskSize1d
+
+func _create_circular_area_offsets(diameter : float) -> Array[Vector2]:
+	var _tmp_radius = diameter/2
+	var _tmp_areaOutline : Array[Vector2] = []
+	var _tmp_areaFilled : Array[Vector2] = []
+
+	# DESCRIPTION: Calculate the circle outline with the Method of Jesko
+	# DERIVED FROM: https://de.wikipedia.org/wiki/Rasterung_von_Kreisen
+	var t1 = _tmp_radius / 16;
+	var t2 = 0;
+	var x  = _tmp_radius;
+	var y  = 0;
+
+	while (x >= y):
+		# DESCRIPTION: Set the octants
+		_tmp_areaOutline.append(Vector2(x, y))
+		_tmp_areaOutline.append(Vector2(x, -y))
+		_tmp_areaOutline.append(Vector2(-x, y))
+		_tmp_areaOutline.append(Vector2(-x, -y))
+		_tmp_areaOutline.append(Vector2(y, x))
+		_tmp_areaOutline.append(Vector2(y, -x))
+		_tmp_areaOutline.append(Vector2(-y, x))
+		_tmp_areaOutline.append(Vector2(-y, -x))
+
+		# DESCRIPTION: Do iteration step
+		y  = y + 1;
+		t1 = t1 + y;
+		t2 = t1 - x;
+
+		if (t2 >= 0):
+			t1 = t2;
+			x  = x - 1;
+
+	# DESCRIPTION: Fill inside of circle
+	# DESCRIPTION: Find all the row coordinates that are existing
+	var _tmp_rows : Array = []
+	var _tmp_outlineSortedByRow : Dictionary = {}
+	var _tmp_outlineSortedByRowMinMax : Dictionary = {}
+
+	for _offset in _tmp_areaOutline:
+		if not _offset.y in _tmp_rows:
+			_tmp_rows.append(_offset.y)
+			_tmp_outlineSortedByRow[_offset.y] = []
+			_tmp_outlineSortedByRowMinMax[_offset.y] = {"min": 0.0, "max": 0.0}
+
+	_tmp_rows.sort()
+	
+	# DESCRIPTION: Sort the column position by the rows
+	for _offset in _tmp_areaOutline:
+		_tmp_outlineSortedByRow[_offset.y].append(_offset.x)
+
+	# DESCRIPTION: Determine colum minimum/maximum for each row
+	for _row in _tmp_outlineSortedByRow:
+		var _tmp_rowData : Array = _tmp_outlineSortedByRow[_row]
+
+		_tmp_outlineSortedByRowMinMax[_row]["min"] = _tmp_rowData.min()
+		_tmp_outlineSortedByRowMinMax[_row]["max"] = _tmp_rowData.max()
+
+	# DESCRIPTION: Create all the Vectors corresponding to a filled circle
+	for _row in _tmp_outlineSortedByRow:
+		var _tmp_min : float = _tmp_outlineSortedByRowMinMax[_row]["min"]
+		var _tmp_max : float = _tmp_outlineSortedByRowMinMax[_row]["max"]
+
+		for _i in range(_tmp_min, _tmp_max, 1):
+			_tmp_areaFilled.append(Vector2(_i, _row))
+
+	# print("Circle: Area: ", _tmp_areaOutline)
+	print(len(_tmp_areaFilled))
+
+	return _tmp_areaFilled
+
+func _update_drawing_properties(drawingOrigin : Vector2, drawingSize : Vector2i, brushWidth : float = self._lineWidth) -> void:
+	self.drawing.origin = drawingOrigin
+	self.drawing.size = drawingSize 
+	self.drawing.brush.width = brushWidth
+
+	self.drawing.mouse_limits.x_min = self.drawing.origin.x
+	self.drawing.mouse_limits.x_max = self.drawing.origin.x + self.drawing.size.x
+
+	self.drawing.mouse_limits.y_min = self.drawing.origin.y
+	self.drawing.mouse_limits.y_max = self.drawing.origin.y + self.drawing.size.y
+
+	# REMARK: Factor 3 hard coded, as otherwise it does not lead to the correct results
+	# TODO: Has to be removed when the bug in the tracking logic is found
+	self.drawing.brush.offsets_from_center = self._create_circular_area_offsets(3*self.drawing.brush.width * DRAWING_PROGRESS.RESIZE_FACTOR)
+
+	# print(self.drawing.origin, self.drawing.size, self.drawing.mouse_limits.x_max, self.drawing.mouse_limits.y_max)
+	
+func _set_content_texture(texture : CompressedTexture2D) -> void:
+	self._contentTexture = texture
+	self._contentRevealSprite.texture = self._contentTexture
+
+	# DESCRIPTION: Remove old index conversion and add new one
+	self._convertIndices.queue_free()
+	self._convertIndices = ConvertIndices.new(int(self._mattePainting.size.x * DRAWING_PROGRESS.RESIZE_FACTOR))
+
+	# DESCRIPTION: Create LUT from content texture
+	var _tmp_maskSize1d : int = self._convert_content_texture_to_non_empty_coarse_lut()
+
+	# DESCRIPTION: Update data required for mouse/progress tracking
+	self._update_drawing_properties(self._drawingResult.position, self._mattePainting.size)
+
+	# DESCRIPTION: Reset all the progress and tracking data to default
+	self._drawingProgress = 0.0
+	self._contentRevealLUT = []
+	self._contentRevealLUT.resize(_tmp_maskSize1d)
+
+## tracks the drawing progress based upon the mouse position[br]
+## ### Remark[br] 
+## Logic does not behave as intended (the recorded progress values 
+## are way too low). Even with the temporary magic number increasing the brush
+## size, the result is not as expected[br]
+## ### TODO[br]
+## Fix logic so that when everything is uncovered, the progress is 1.0
+func _track_drawing_progress(mousePosition : Vector2) -> void:
+	var _tmp_indicesToUpdate : Array = []
+
+	var _tmp_mousePositionValidX : bool = (mousePosition.x >= self.drawing.mouse_limits.x_min) and (mousePosition.x <= self.drawing.mouse_limits.x_max)
+	var _tmp_mousePositionValidY : bool = (mousePosition.y >= self.drawing.mouse_limits.y_min) and (mousePosition.y <= self.drawing.mouse_limits.y_max)
+
+	# DESCRIPTION: Verify whether the mouse position is inside the drawing area
+	if _tmp_mousePositionValidX and _tmp_mousePositionValidY:
+		# DESCRIPTION: Rescale the position to match the scaled progress mask
+		var _tmp_positionScaled : Vector2 = Vector2(0,0)
+		_tmp_positionScaled.x = mousePosition.x * DRAWING_PROGRESS.RESIZE_FACTOR
+		_tmp_positionScaled.y = mousePosition.y * DRAWING_PROGRESS.RESIZE_FACTOR
+
+		# DESCRIPTION: Calculate all the points inside a circle with the brush radius 
+		# around the mouse position 
+		for _offset in self.drawing.brush.offsets_from_center:
+			var _tmp_positionScaledOffset : Vector2 = _tmp_positionScaled + _offset
+
+			# DESCRIPTION: Verify if the points are still within the drawing area boundary
+			var _tmp_positionOffsetValidX : bool = (_tmp_positionScaledOffset.x >= self.drawing.mouse_limits.x_min * DRAWING_PROGRESS.RESIZE_FACTOR) and (_tmp_positionScaledOffset.x <= self.drawing.mouse_limits.x_max * DRAWING_PROGRESS.RESIZE_FACTOR)
+			var _tmp_positionOffsetValidY : bool = (_tmp_positionScaledOffset.x >= self.drawing.mouse_limits.y_min * DRAWING_PROGRESS.RESIZE_FACTOR) and (_tmp_positionScaledOffset.y <= self.drawing.mouse_limits.y_max * DRAWING_PROGRESS.RESIZE_FACTOR)
+
+			if _tmp_positionOffsetValidX and _tmp_positionOffsetValidY:
+				# print("Setting position ", _tmp_positionScaled, " to 1")
+				_tmp_indicesToUpdate.append(self._convertIndices.from_2d_to_1d(_tmp_positionScaled))
+
+		if _tmp_indicesToUpdate != []:
+			for _index in _tmp_indicesToUpdate:
+				self._contentRevealLUT[_index] = 1
+
+		# print("Before: ", mousePosition, ", scaled: ", _tmp_positionScaled)
+		
+
+func _evaluate_drawing_progress() -> void:
+	var _tmp_progress : float = 0.0
+
+	for _index in self._contentNonEmptyCoarseLUT:
+		_tmp_progress += float(self._contentRevealLUT[_index])
+	
+	self._drawingProgress = _tmp_progress/self._contentNonEmptyCoarseLength
+
+	print("Determine Drawing Progress: ", self._drawingProgress)
 
 ################################################################################
 #### PUBLIC MEMBER FUNCTIONS ###################################################
@@ -53,8 +331,38 @@ func allow_drawing(status : bool) -> void:
 	self._drawingAllowed = status
 
 	self._lineVisual.visible = status
-	self._lineTexture.visible = status
+	self._lineMattePainting.visible = status
 	self._brush.visible = status
+
+################################################################################
+#### SIGNAL HANDLING ###########################################################
+################################################################################
+func _on_next_button_pressed() -> void:
+	self._particleManager.stop_effect()
+	self._nextButton.visible = false
+	await get_tree().create_timer(4).timeout
+	self._clear_matte_painting()
+	self._set_content_texture(self._particleManager.get_emission_texture_of_active_content())
+	self._particleManager.start_effect()
+
+################################################################################
+#### GODOT LOADTIME FUNCTION OVERRIDES #########################################
+################################################################################
+func _ready() -> void:
+	# DESCRIPTION: Connect signals
+	self._nextButton.pressed.connect(self._on_next_button_pressed)
+
+	self._particleManager.start_effect()
+	self._set_content_texture(self._particleManager.get_emission_texture_of_active_content())
+
+	self.drawing.brush.width = self._lineWidth
+
+	# DESCRIPTION: Setting up the Line2d
+	self._lineVisual.width = self.drawing.brush.width
+	self._lineMattePainting.width = self.drawing.brush.width
+
+	# DESCRIPTION: Setting up visibility of elements
+	self._nextButton.visible = false
 
 ################################################################################
 #### GODOT RUNTIME FUNCTION OVERRIDES ##########################################
@@ -66,14 +374,28 @@ func _process(_delta: float) -> void:
 		# DESCRIPTION: Update 
 		self._brush.position = _tmp_mousePosition
 
-		self._manage_line(self._lineVisual, _tmp_mousePosition, _lastMousePosition)
-		self._manage_line(self._lineTexture, _tmp_mousePosition, _lastMousePosition, false)
+		self._manage_line(self._lineVisual, _tmp_mousePosition, self._lastMousePosition)
+		self._manage_line(self._lineMattePainting, _tmp_mousePosition, self._lastMousePosition, false)
+
+		self._track_drawing_progress(_tmp_mousePosition)
 
 		self._lastMousePosition = _tmp_mousePosition
 
 		# DESCRIPTION: Manage length of line used for texture creation. If exceeding
 		# a certain length, save the current display of the viewport into a static 
 		# texture and update the sprite's texture accordingly
-		if self._lineTexture.points.size() > 500:
-			self._mattePersistence.texture = self._save_to_texture_and_prune()
-			
+		if self._lineMattePainting.points.size() > 500:
+			self._mattePaintingPersistence.texture = self._save_drawing_to_texture_and_prune_line()
+
+		# DESCRIPTION: Determine and evaluate the drawing process
+		if self._drawingProgressEvaluationTimer != 100:
+			self._drawingProgressEvaluationTimer += 1
+		
+		else:
+			self._drawingProgressEvaluationTimer = 0
+			self._evaluate_drawing_progress()
+
+			# REMARK: Currently hardcoded. Has to be changed after the progress
+			# tracking logic has been updated to function properly!
+			if self._drawingProgress >= 0.3:
+				self._nextButton.visible = true
