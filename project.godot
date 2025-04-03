@@ -36,10 +36,6 @@ window/stretch/mode="canvas_items"
 
 enabled=PackedStringArray("res://addons/meta_player/plugin.cfg")
 
-[gui]
-
-theme/custom="uid://ke8v0mmlj3jr"
-
 [input]
 
 forward={
