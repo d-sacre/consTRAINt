@@ -3,9 +3,12 @@ extends Node2D
 ################################################################################
 #### CONSTANTS #################################################################
 ################################################################################
-class DRAWING_PROGRESS:
-	const RESIZE_FACTOR : float = 1.0/16.0
-	const ALPHA_THRESHOLD : int = 128
+class DRAWING:
+	enum STATES{DRAWING, NEXT}
+
+	class PROGRESS:
+		const RESIZE_FACTOR : float = 1.0/16.0
+		const ALPHA_THRESHOLD : int = 128
 
 ################################################################################
 #### INSTANCES AND OBJECTS #####################################################
@@ -33,6 +36,7 @@ var _convertIndices : ConvertIndices = ConvertIndices.new(1920)
 var _drawingAllowed : bool = true
 var _lastMousePosition : Vector2 = Vector2.ZERO
 
+var _drawingState : DRAWING.STATES = DRAWING.STATES.DRAWING
 var _drawingProgress : float = 0.0
 var _drawingProgressEvaluationTimer = 0
 
@@ -40,6 +44,9 @@ var _contentTexture : CompressedTexture2D
 var _contentNonEmptyCoarseLUT : Array[int] = []
 var _contentNonEmptyCoarseLength : int = 0
 var _contentRevealLUT : Array[int] = []
+
+var _requestShowNextButton : bool = false
+var _nextButtonHiddenLocked : bool = false
 
 ################################################################################
 #### EXPORT MEMBER VARIABLES ###################################################
@@ -102,7 +109,7 @@ func _clear_matte_painting() -> void:
 	self._lineMattePainting.points = []
 	self._mattePaintingPersistence.texture = null
 
-func _resize(image : Image, factor : float = DRAWING_PROGRESS.RESIZE_FACTOR) -> Image:
+func _resize(image : Image, factor : float = DRAWING.PROGRESS.RESIZE_FACTOR) -> Image:
 	var _tmp_image : Image = Image.new()
 	var _tmp_size : Vector2i = image.get_size()
 
@@ -118,7 +125,7 @@ func _resize(image : Image, factor : float = DRAWING_PROGRESS.RESIZE_FACTOR) -> 
 
 	return _tmp_image 
 
-func _convert_image_to_bw_mask_based_on_alpha(image : Image, alpha : int = DRAWING_PROGRESS.ALPHA_THRESHOLD) -> Image:
+func _convert_image_to_bw_mask_based_on_alpha(image : Image, alpha : int = DRAWING.PROGRESS.ALPHA_THRESHOLD) -> Image:
 	var _tmp_image : Image = Image.new()
 	var _tmp_size : Vector2i = image.get_size()
 
@@ -233,12 +240,12 @@ func _create_circular_area_offsets(diameter : float) -> Array[Vector2]:
 		for _i in range(_tmp_min, _tmp_max, 1):
 			_tmp_areaFilled.append(Vector2(_i, _row))
 
-	# print("Circle: Area: ", _tmp_areaOutline)
-	print(len(_tmp_areaFilled))
+	# print_debug("Circular Brush Offsets: ", len(_tmp_areaFilled))
 
 	return _tmp_areaFilled
 
 func _update_drawing_properties(drawingOrigin : Vector2, drawingSize : Vector2i, brushWidth : float = self._lineWidth) -> void:
+	print_debug("Update drawing properties")
 	self.drawing.origin = drawingOrigin
 	self.drawing.size = drawingSize 
 	self.drawing.brush.width = brushWidth
@@ -251,17 +258,18 @@ func _update_drawing_properties(drawingOrigin : Vector2, drawingSize : Vector2i,
 
 	# REMARK: Factor 3 hard coded, as otherwise it does not lead to the correct results
 	# TODO: Has to be removed when the bug in the tracking logic is found
-	self.drawing.brush.offsets_from_center = self._create_circular_area_offsets(3*self.drawing.brush.width * DRAWING_PROGRESS.RESIZE_FACTOR)
+	self.drawing.brush.offsets_from_center = self._create_circular_area_offsets(3*self.drawing.brush.width * DRAWING.PROGRESS.RESIZE_FACTOR)
 
 	# print(self.drawing.origin, self.drawing.size, self.drawing.mouse_limits.x_max, self.drawing.mouse_limits.y_max)
 	
 func _set_content_texture(texture : CompressedTexture2D) -> void:
+	print_debug("Set content texture")
 	self._contentTexture = texture
 	self._contentRevealSprite.texture = self._contentTexture
 
 	# DESCRIPTION: Remove old index conversion and add new one
 	self._convertIndices.queue_free()
-	self._convertIndices = ConvertIndices.new(int(self._mattePainting.size.x * DRAWING_PROGRESS.RESIZE_FACTOR))
+	self._convertIndices = ConvertIndices.new(int(self._mattePainting.size.x * DRAWING.PROGRESS.RESIZE_FACTOR))
 
 	# DESCRIPTION: Create LUT from content texture
 	var _tmp_maskSize1d : int = self._convert_content_texture_to_non_empty_coarse_lut()
@@ -291,8 +299,8 @@ func _track_drawing_progress(mousePosition : Vector2) -> void:
 	if _tmp_mousePositionValidX and _tmp_mousePositionValidY:
 		# DESCRIPTION: Rescale the position to match the scaled progress mask
 		var _tmp_positionScaled : Vector2 = Vector2(0,0)
-		_tmp_positionScaled.x = mousePosition.x * DRAWING_PROGRESS.RESIZE_FACTOR
-		_tmp_positionScaled.y = mousePosition.y * DRAWING_PROGRESS.RESIZE_FACTOR
+		_tmp_positionScaled.x = mousePosition.x * DRAWING.PROGRESS.RESIZE_FACTOR
+		_tmp_positionScaled.y = mousePosition.y * DRAWING.PROGRESS.RESIZE_FACTOR
 
 		# DESCRIPTION: Calculate all the points inside a circle with the brush radius 
 		# around the mouse position 
@@ -300,19 +308,15 @@ func _track_drawing_progress(mousePosition : Vector2) -> void:
 			var _tmp_positionScaledOffset : Vector2 = _tmp_positionScaled + _offset
 
 			# DESCRIPTION: Verify if the points are still within the drawing area boundary
-			var _tmp_positionOffsetValidX : bool = (_tmp_positionScaledOffset.x >= self.drawing.mouse_limits.x_min * DRAWING_PROGRESS.RESIZE_FACTOR) and (_tmp_positionScaledOffset.x <= self.drawing.mouse_limits.x_max * DRAWING_PROGRESS.RESIZE_FACTOR)
-			var _tmp_positionOffsetValidY : bool = (_tmp_positionScaledOffset.x >= self.drawing.mouse_limits.y_min * DRAWING_PROGRESS.RESIZE_FACTOR) and (_tmp_positionScaledOffset.y <= self.drawing.mouse_limits.y_max * DRAWING_PROGRESS.RESIZE_FACTOR)
+			var _tmp_positionOffsetValidX : bool = (_tmp_positionScaledOffset.x >= self.drawing.mouse_limits.x_min * DRAWING.PROGRESS.RESIZE_FACTOR) and (_tmp_positionScaledOffset.x <= self.drawing.mouse_limits.x_max * DRAWING.PROGRESS.RESIZE_FACTOR)
+			var _tmp_positionOffsetValidY : bool = (_tmp_positionScaledOffset.x >= self.drawing.mouse_limits.y_min * DRAWING.PROGRESS.RESIZE_FACTOR) and (_tmp_positionScaledOffset.y <= self.drawing.mouse_limits.y_max * DRAWING.PROGRESS.RESIZE_FACTOR)
 
 			if _tmp_positionOffsetValidX and _tmp_positionOffsetValidY:
-				# print("Setting position ", _tmp_positionScaled, " to 1")
 				_tmp_indicesToUpdate.append(self._convertIndices.from_2d_to_1d(_tmp_positionScaled))
 
 		if _tmp_indicesToUpdate != []:
 			for _index in _tmp_indicesToUpdate:
 				self._contentRevealLUT[_index] = 1
-
-		# print("Before: ", mousePosition, ", scaled: ", _tmp_positionScaled)
-		
 
 func _evaluate_drawing_progress() -> void:
 	var _tmp_progress : float = 0.0
@@ -322,7 +326,51 @@ func _evaluate_drawing_progress() -> void:
 	
 	self._drawingProgress = _tmp_progress/self._contentNonEmptyCoarseLength
 
-	print("Determine Drawing Progress: ", self._drawingProgress)
+	# print("Determine Drawing Progress: ", self._drawingProgress)
+
+func _determine_next_button_visibility() -> void:
+	if self._requestShowNextButton:
+		if not self._nextButtonHiddenLocked:
+			self._nextButton.visible = true
+
+		else: 
+			self._nextButton.visible = false
+
+	else:
+		self._nextButton.visible = false
+
+func _show_drawing_visualization(status : bool) -> void:
+	self._lineVisual.visible = status
+	self._brush.visible = status
+
+func _initialize_new_drawing() -> void:
+	var _tmp_timeAfter = Time.get_unix_time_from_system()
+	self._drawingProgress = 0.0
+	self._clear_matte_painting()
+	self._set_content_texture(self._particleManager.get_emission_texture_of_active_content())
+	self._evaluate_drawing_progress()
+	self._nextButtonHiddenLocked = false
+	self._drawingState = DRAWING.STATES.DRAWING
+	self._particleManager.start_effect()
+
+	# # DESCRIPTION: Set brush/mouse to center of drawing area and remove any tail
+	# Input.warp_mouse(
+	# 	Vector2(
+	# 		(self.drawing.mouse_limits.x_min + self.drawing.mouse_limits.x_max)/2,
+	# 		(self.drawing.mouse_limits.y_min + self.drawing.mouse_limits.y_max)/2
+	# 	)
+	# )
+	# self._clear_matte_painting()
+	self._show_drawing_visualization(true)
+
+func _clear_old_drawing() -> void:
+	self._show_drawing_visualization(false)
+	self._drawingState = DRAWING.STATES.NEXT
+	self._particleManager.stop_effect()
+	self._requestShowNextButton = false
+	self._nextButtonHiddenLocked = true
+	self._determine_next_button_visibility()
+	await get_tree().create_timer(2).timeout
 
 ################################################################################
 #### PUBLIC MEMBER FUNCTIONS ###################################################
@@ -338,12 +386,8 @@ func allow_drawing(status : bool) -> void:
 #### SIGNAL HANDLING ###########################################################
 ################################################################################
 func _on_next_button_pressed() -> void:
-	self._particleManager.stop_effect()
-	self._nextButton.visible = false
-	await get_tree().create_timer(4).timeout
-	self._clear_matte_painting()
-	self._set_content_texture(self._particleManager.get_emission_texture_of_active_content())
-	self._particleManager.start_effect()
+	await self._clear_old_drawing()
+	self._initialize_new_drawing()
 
 ################################################################################
 #### GODOT LOADTIME FUNCTION OVERRIDES #########################################
@@ -394,8 +438,18 @@ func _process(_delta: float) -> void:
 		else:
 			self._drawingProgressEvaluationTimer = 0
 			self._evaluate_drawing_progress()
+			# print_debug("_requestShowNextButton: ", self._requestShowNextButton, ", _nextButtonHiddenLocked: ", self._nextButtonHiddenLocked)
 
 			# REMARK: Currently hardcoded. Has to be changed after the progress
 			# tracking logic has been updated to function properly!
 			if self._drawingProgress >= 0.3:
-				self._nextButton.visible = true
+				if not self._drawingState == DRAWING.STATES.NEXT:
+					self._requestShowNextButton = true
+
+				else:
+					self._requestShowNextButton = false
+
+			else:
+				self._requestShowNextButton = false
+
+		self._determine_next_button_visibility()
