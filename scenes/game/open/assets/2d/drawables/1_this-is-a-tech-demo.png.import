@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://wlbesekpus0u"
-path="res://.godot/imported/text1.png-23ec616ea46a6201aef8bc3669496be8.ctex"
+uid="uid://cme1cpsrgw8b8"
+path="res://.godot/imported/1_this-is-a-tech-demo.png-abbdfbafd9dda2a4744e5687cabae634.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/game/shared/drawing/sprites/drawables/text1.png"
-dest_files=["res://.godot/imported/text1.png-23ec616ea46a6201aef8bc3669496be8.ctex"]
+source_file="res://scenes/game/open/assets/2d/drawables/1_this-is-a-tech-demo.png"
+dest_files=["res://.godot/imported/1_this-is-a-tech-demo.png-abbdfbafd9dda2a4744e5687cabae634.ctex"]
 
 [params]
 

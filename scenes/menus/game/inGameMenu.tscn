@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bj5o7haq0dls0"]
+[gd_scene load_steps=6 format=3 uid="uid://bj5o7haq0dls0"]
 
 [ext_resource type="Script" uid="uid://ch5lh8kulmdc5" path="res://scenes/menus/game/inGameMenu.gd" id="1_au5om"]
 [ext_resource type="PackedScene" uid="uid://bcv2ttgpnadua" path="res://scenes/menus/game/contexts/main/main.tscn" id="1_pw764"]
 [ext_resource type="Theme" uid="uid://ke8v0mmlj3jr" path="res://themes/consTRAINt_gui_main.theme" id="1_pyu7u"]
 [ext_resource type="PackedScene" uid="uid://dajxnndjb5pf2" path="res://scenes/menus/game/contexts/settings/settings.tscn" id="3_nfqe5"]
+[ext_resource type="PackedScene" uid="uid://blwakdd8833mb" path="res://scenes/menus/game/contexts/endOfDemo/endOfDemo.tscn" id="5_ep7b7"]
 
 [node name="inGameMenu" type="Control"]
 process_mode = 3
@@ -40,4 +41,7 @@ grow_vertical = 2
 layout_mode = 1
 
 [node name="settings" parent="contexts" instance=ExtResource("3_nfqe5")]
+layout_mode = 1
+
+[node name="endOfDemo" parent="contexts" instance=ExtResource("5_ep7b7")]
 layout_mode = 1

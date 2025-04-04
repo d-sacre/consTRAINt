@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpatqj8i2soxq"
-path="res://.godot/imported/D2JamLogo_Temp_Transparent_grayscale.png-783d5176b39c1cd47e7e166a6279dace.ctex"
+uid="uid://cw6duf8bpebbm"
+path="res://.godot/imported/3_not-only-text.png-62681e2a26d6e536b9ae8278515ce202.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/game/shared/drawing/sprites/drawables/D2JamLogo_Temp_Transparent_grayscale.png"
-dest_files=["res://.godot/imported/D2JamLogo_Temp_Transparent_grayscale.png-783d5176b39c1cd47e7e166a6279dace.ctex"]
+source_file="res://scenes/game/open/assets/2d/drawables/3_not-only-text.png"
+dest_files=["res://.godot/imported/3_not-only-text.png-62681e2a26d6e536b9ae8278515ce202.ctex"]
 
 [params]
 

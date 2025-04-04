@@ -1,5 +1,7 @@
 extends Node2D
 
+signal end_of_demo
+
 ################################################################################
 #### CONSTANTS #################################################################
 ################################################################################
@@ -39,11 +41,14 @@ var _lastMousePosition : Vector2 = Vector2.ZERO
 var _drawingState : DRAWING.STATES = DRAWING.STATES.DRAWING
 var _drawingProgress : float = 0.0
 var _drawingProgressEvaluationTimer = 0
+var _drawingFinishedThreshold : float = 1.0
 
 var _contentTexture : CompressedTexture2D
 var _contentNonEmptyCoarseLUT : Array[int] = []
 var _contentNonEmptyCoarseLength : int = 0
 var _contentRevealLUT : Array[int] = []
+var _lastContent : bool = false
+var _lastContentFinished : bool = false
 
 var _requestShowNextButton : bool = false
 var _nextButtonHiddenLocked : bool = false
@@ -71,7 +76,7 @@ var _nextButtonHiddenLocked : bool = false
 
 @onready var _particleManager : Node2D = $drawingShape/particleManager
 
-@onready var _nextButton : Button = $next
+@onready var _nextButton : Button = $ui/next
 
 ################################################################################
 #### PRIVATE MEMBER FUNCTIONS ##################################################
@@ -281,6 +286,7 @@ func _set_content_texture(texture : CompressedTexture2D) -> void:
 	self._drawingProgress = 0.0
 	self._contentRevealLUT = []
 	self._contentRevealLUT.resize(_tmp_maskSize1d)
+	self._drawingFinishedThreshold = self._particleManager.get_active_content_drawing_finished_threshold()
 
 ## tracks the drawing progress based upon the mouse position[br]
 ## ### Remark[br] 
@@ -318,7 +324,7 @@ func _track_drawing_progress(mousePosition : Vector2) -> void:
 			for _index in _tmp_indicesToUpdate:
 				self._contentRevealLUT[_index] = 1
 
-func _evaluate_drawing_progress() -> void:
+func _calculate_drawing_progress() -> void:
 	var _tmp_progress : float = 0.0
 
 	for _index in self._contentNonEmptyCoarseLUT:
@@ -326,18 +332,35 @@ func _evaluate_drawing_progress() -> void:
 	
 	self._drawingProgress = _tmp_progress/self._contentNonEmptyCoarseLength
 
-	# print("Determine Drawing Progress: ", self._drawingProgress)
+	print("Determine Drawing Progress: ", self._drawingProgress)
+
+func _evaluate_drawing_progress() -> void:
+	var _tmp_status : bool = false
+
+	# REMARK: Currently hardcoded. Has to be changed after the progress
+	# tracking logic has been updated to function properly!
+	if self._drawingProgress >= self._drawingFinishedThreshold:
+		if not self._drawingState == DRAWING.STATES.NEXT:
+			if not self._lastContent:
+				_tmp_status = true
+
+			else:
+				self._lastContentFinished = true
+				print_debug("Emit end of demo signal")
+				self.end_of_demo.emit()
+				self._particleManager.stop_effect()
+
+	self._requestShowNextButton = _tmp_status
 
 func _determine_next_button_visibility() -> void:
+	var _tmp_status : bool = false
+
 	if self._requestShowNextButton:
 		if not self._nextButtonHiddenLocked:
-			self._nextButton.visible = true
+			if not self._lastContentFinished:
+				_tmp_status = true
 
-		else: 
-			self._nextButton.visible = false
-
-	else:
-		self._nextButton.visible = false
+	self._nextButton.visible = _tmp_status
 
 func _show_drawing_visualization(status : bool) -> void:
 	self._lineVisual.visible = status
@@ -348,7 +371,7 @@ func _initialize_new_drawing() -> void:
 	self._drawingProgress = 0.0
 	self._clear_matte_painting()
 	self._set_content_texture(self._particleManager.get_emission_texture_of_active_content())
-	self._evaluate_drawing_progress()
+	self._calculate_drawing_progress()
 	self._nextButtonHiddenLocked = false
 	self._drawingState = DRAWING.STATES.DRAWING
 	self._particleManager.start_effect()
@@ -387,7 +410,14 @@ func allow_drawing(status : bool) -> void:
 ################################################################################
 func _on_next_button_pressed() -> void:
 	await self._clear_old_drawing()
-	self._initialize_new_drawing()
+	self._particleManager.load_next_content()
+
+	if not self._lastContentFinished:
+		self._initialize_new_drawing()
+		
+func _on_last_content() -> void:
+	print_debug("last content signal received")
+	self._lastContent  = true
 
 ################################################################################
 #### GODOT LOADTIME FUNCTION OVERRIDES #########################################
@@ -395,6 +425,7 @@ func _on_next_button_pressed() -> void:
 func _ready() -> void:
 	# DESCRIPTION: Connect signals
 	self._nextButton.pressed.connect(self._on_next_button_pressed)
+	self._particleManager.last_content.connect(self._on_last_content)
 
 	self._particleManager.start_effect()
 	self._set_content_texture(self._particleManager.get_emission_texture_of_active_content())
@@ -437,19 +468,7 @@ func _process(_delta: float) -> void:
 		
 		else:
 			self._drawingProgressEvaluationTimer = 0
+			self._calculate_drawing_progress()
 			self._evaluate_drawing_progress()
-			# print_debug("_requestShowNextButton: ", self._requestShowNextButton, ", _nextButtonHiddenLocked: ", self._nextButtonHiddenLocked)
-
-			# REMARK: Currently hardcoded. Has to be changed after the progress
-			# tracking logic has been updated to function properly!
-			if self._drawingProgress >= 0.3:
-				if not self._drawingState == DRAWING.STATES.NEXT:
-					self._requestShowNextButton = true
-
-				else:
-					self._requestShowNextButton = false
-
-			else:
-				self._requestShowNextButton = false
 
 		self._determine_next_button_visibility()

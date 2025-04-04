@@ -111,9 +111,12 @@ antialiased = true
 position = Vector2(40, -40)
 texture = ExtResource("2_bttsk")
 
-[node name="next" type="Button" parent="."]
-offset_left = 1800.0
+[node name="ui" type="CanvasLayer" parent="."]
+
+[node name="next" type="Button" parent="ui"]
+offset_left = 1720.0
 offset_top = 512.0
-offset_right = 1845.0
-offset_bottom = 552.0
+offset_right = 1839.0
+offset_bottom = 587.0
+theme_override_font_sizes/font_size = 48
 text = "Next"
