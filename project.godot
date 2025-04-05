@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Cloud Expresss"
+config/name="Cloud Expresss - Tech Demo (\"Clear Skies\")"
 run/main_scene="uid://bmjvk725nt4x3"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
