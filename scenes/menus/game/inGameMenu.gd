@@ -1,4 +1,4 @@
-extends PanelContainer
+extends Control
 
 ################################################################################
 #### REQUIREMENTS ##############################################################
@@ -9,84 +9,98 @@ extends PanelContainer
 ################################################################################
 ################################################################################
 
+################################################################################
+#### SIGNALS ###################################################################
+################################################################################
 signal menu_visibility_changed
 
-################################################################################
-#### CONSTANT DEFINITIONS ######################################################
-################################################################################
-const _buttonPathRoot : String = "MarginContainer/VBoxContainer/"
+enum MENU_STATES{HIDDEN, MAIN, SETTINGS, END_OF_DEMO}
+
+var _state : MENU_STATES = MENU_STATES.HIDDEN
 
 ################################################################################
 #### ONREADY MEMBER VARIABLES ##################################################
 ################################################################################
-@onready var _buttonLUT : Dictionary = {
-	"resume": {
-		"reference": self.get_node(self._buttonPathRoot + "resume"),
-		"callback": _on_resume_pressed,
-		"web": true
-	},
-	"exitToMainMenu": {
-		"text": "Exit to Main Menu",
-		"reference": self.get_node(self._buttonPathRoot + "exitToMainMenu"),
-		"callback": _on_exit_to_main_menu_pressed,
-		"web": true
-	},
-	"exitToSystem": {
-		"text": "Exit to System",
-		"reference": self.get_node(self._buttonPathRoot + "exitToSystem"),
-		"callback": _on_exit_to_system_pressed,
-		"web": false
-	}
-}
+@onready var _main : PanelContainer = $contexts/main
+@onready var _settings : PanelContainer = $contexts/settings
+@onready var _endOfDemo : PanelContainer = $contexts/endOfDemo
+
+################################################################################
+#### PRIVATE MEMBER FUNCTIONS ##################################################
+################################################################################
+func _toggle_menu() -> void:
+	match self._state:
+		MENU_STATES.HIDDEN:
+			self.visible = true
+			self._main.visible = true
+			self._settings.visible = false
+
+			get_tree().paused = true
+			self.menu_visibility_changed.emit(true)
+
+			self._state = MENU_STATES.MAIN
+
+		_:
+			self.visible = false
+			self._main.visible = false
+			self._settings.visible = false
+
+			get_tree().paused = true
+			self.menu_visibility_changed.emit(false)
+
+			self._state = MENU_STATES.HIDDEN
+
+################################################################################
+#### PUBLIC MEMBER FUNCTIONS ###################################################
+################################################################################
+func show_end_of_demo_popup() -> void:
+	print_debug("Show end of demo popup triggered")
+	get_tree().paused = true
+	self.menu_visibility_changed.emit(true)
+
+	self._state = MENU_STATES.END_OF_DEMO
+	self.visible = true
+	self._endOfDemo.visible = true
 
 ################################################################################
 #### SIGNAL HANDLING ###########################################################
 ################################################################################
-func _on_resume_pressed() -> void:
-	visible = false
+func _on_hide_menu() -> void:
+	self._main.visible = false
+	self._settings.visible = false
+	self._endOfDemo.visible = false
+	self.visible = false
+
 	get_tree().paused = false
-	self.menu_visibility_changed.emit(self.visible)
+	self._state = MENU_STATES.HIDDEN
 
-func _on_exit_to_main_menu_pressed() -> void:
-	AudioManager.fade_out_and_stop_all_playing()
-	TransitionManager.transition_to_scene(CONS_TRAIN_T.SCENES.MAIN_MENU.PATH)
+	self.menu_visibility_changed.emit(false)
 
-func _on_exit_to_system_pressed() -> void:
-	TransitionManager.exit_to_system()
+func _on_show_settings_context() -> void:
+	self._settings.visible = true
+	self._main.visible = false
+
+	self._state = MENU_STATES.SETTINGS
+	self.menu_visibility_changed.emit(true)
 
 ################################################################################
 #### GODOT LOADTIME FUNCTION OVERRIDES #########################################
 ################################################################################
 func _ready() -> void:
-	# DESCRIPTION: Connecting all the buttons to the respective callbacks,
-	# set custom button texts if available and set the visibilty in exports 
-	# correctly
-	for buttonID in self._buttonLUT:
-		var _tmp_button : Dictionary = self._buttonLUT[buttonID]
+	# DESCRIPTION: Connect to the signals
+	self._main.hide_menu.connect(self._on_hide_menu)
+	self._settings.hide_menu.connect(self._on_hide_menu)
+	self._endOfDemo.hide_menu.connect(self._on_hide_menu)
+	self._main.show_settings_context.connect(self._on_show_settings_context)
 
-		if "text" in _tmp_button.keys():
-			_tmp_button.reference.text = _tmp_button["text"]
-
-		# DESCRIPTION: Setting visibility depending on export type
-		if OS.has_feature("web"):
-			if not _tmp_button.web:
-				_tmp_button.reference.visible = false
-			
-			else:
-				_tmp_button.reference.pressed.connect(_tmp_button.callback)
-		
-		else:
-			# DESCRIPTION: Connection to the respective callback
-			_tmp_button.reference.pressed.connect(_tmp_button.callback)
-
-	# DESCRIPTION: Ensure that the menu is not visible
 	self.visible = false
+	self._main.visible = false
+	self._settings.visible = false
+	self._endOfDemo.visible = false
 		
 ################################################################################
 #### GODOT RUNTIME FUNCTION OVERRIDES ##########################################
 ################################################################################
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("toggle_ingame_menu"):
-		self.visible = !self.visible
-		get_tree().paused = !get_tree().paused
-		self.menu_visibility_changed.emit(self.visible)
+		self._toggle_menu()

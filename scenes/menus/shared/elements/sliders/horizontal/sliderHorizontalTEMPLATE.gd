@@ -49,6 +49,11 @@ func initialize(keyChain : Array, value : float) -> void:
 	self._keyChain = keyChain
 	self._slider.value = value
 
+func set_value_silent(value : float) -> void:
+# func update_display(value : float) -> void:
+	self._slider.set_value_no_signal(value)
+	self._update_display()
+
 ################################################################################
 #### SIGNAL HANDLING ###########################################################
 ################################################################################

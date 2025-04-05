@@ -1,7 +1,7 @@
 {
     "themeLight": {
         "var1":{
-                "fp": "res://globalAssets/music/consTRAINt_themeLight_var1.wav",
+                "fp": "res://globalAssets/music/nuvole-bianche_clear-skies_consTRAINt_var1.wav",
                 "volume_db": -6,
                 "playing": false,
                 "autoplay": false,
@@ -20,7 +20,7 @@
                 ]
         },
         "var2":{
-            "fp": "res://globalAssets/music/consTRAINt_themeLight_var2.wav",
+            "fp": "res://globalAssets/music/nuvole-bianche_clear-skies_consTRAINt_var2.wav",
             "volume_db": -6,
             "playing": false,
             "autoplay": false,
@@ -39,7 +39,7 @@
             ]
         },
         "var3":{
-            "fp": "res://globalAssets/music/consTRAINt_themeLight_var4.wav",
+            "fp": "res://globalAssets/music/nuvole-bianche_clear-skies_consTRAINt_var4.wav",
             "volume_db": -6,
             "playing": false,
             "autoplay": false,
@@ -58,7 +58,7 @@
             ]
         },
         "var4":{
-            "fp": "res://globalAssets/music/consTRAINt_themeLight_var4.wav",
+            "fp": "res://globalAssets/music/nuvole-bianche_clear-skies_consTRAINt_var4.wav",
             "volume_db": -6,
             "playing": false,
             "autoplay": false,

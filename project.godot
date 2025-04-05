@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Cloud Expresss"
+config/name="Cloud Expresss - Tech Demo (\"Clear Skies\")"
 run/main_scene="uid://bmjvk725nt4x3"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
@@ -19,10 +19,10 @@ config/icon="res://icon.svg"
 
 FileIO="*res://utils/FileIO.gd"
 DictionaryParsing="*res://utils/DictionaryParsing.gd"
-TransitionManager="*res://managers/transition/TransitionManager.tscn"
 WindowManager="*res://managers/window/WindowManager.gd"
-SettingsManager="*res://managers/settings/SettingsManager.tscn"
 AudioManager="*res://managers/audio/AudioManager.tscn"
+TransitionManager="*res://managers/transition/TransitionManager.tscn"
+SettingsManager="*res://managers/settings/SettingsManager.tscn"
 
 [display]
 
@@ -31,15 +31,10 @@ window/size/viewport_height=1080
 window/size/window_width_override=640
 window/size/window_height_override=360
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/meta_player/plugin.cfg")
-
-[gui]
-
-theme/custom="uid://ke8v0mmlj3jr"
 
 [input]
 

@@ -27,7 +27,7 @@ func _ready() -> void:
 	# DESCRIPTION: Load the credits text from file, parse it to BBCode and make
 	# sure that the credits context is hidden
 	var _creditsTextAsDict = FileIO.json.load(self._creditsTextFile)
-	self.text = "[color=#000000]" + self._bbcodeparser.parse(_creditsTextAsDict) + "[/color]"
+	self.text = self._bbcodeparser.parse(_creditsTextAsDict)
 
 # REMARK: Required, as otherwise the BBCode Parser will not be garbage collected 
 # when the scene is quit, leading to a "Leaked Instances" error

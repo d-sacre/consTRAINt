@@ -49,8 +49,8 @@ const _buttonPathRoot : String = "default/buttonCluster/VBoxContainer/"
 	}
 }
 
-@onready var _settings : Control = $contexts/settings
-@onready var _credits : RichTextLabel = $contexts/credits
+@onready var _settings : PanelContainer = $contexts/settings
+@onready var _credits : PanelContainer = $contexts/credits
 
 ################################################################################
 #### SIGNAL HANDLING ###########################################################
@@ -63,12 +63,10 @@ func _on_transition_finished() -> void:
 
 func _on_play_button_pressed() -> void:
 	TransitionManager.transition_to_scene(_playButtonScene)
-	if not AudioManager.is_song_playing_by_key_chain(["themeLight", "var1"]):
-		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
 
 func _on_settings_button_pressed() -> void:
 	self._settings.visible = !self._settings.visible
-	self._settings.update_display()
+	self._settings.get_node("settingsControls").update_display()
 	self._credits.visible = false
 	
 func _on_credits_button_pressed() -> void:
@@ -108,12 +106,5 @@ func _ready() -> void:
 	TransitionManager.transition_finished.connect(self._on_transition_finished)
 	SettingsManager.force_update()
 
-	if not AudioManager.is_song_playing_by_key_chain(["themeLight", "var1"]):
+	if not AudioManager.is_any_music_playing():
 		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
-
-	print("Master Volume:", SettingsManager.get_user_setting_by_key_chain_safe(["volume", "master"]))
-
-# func _process(_delta : float) -> void:
-# 	if not AudioManager.is_song_playing_by_key_chain(["themeLight", "var1"]):
-# 		AudioManager.play_song_by_key_chain(["themeLight", "var1"])
-# 		self.set_process(false)

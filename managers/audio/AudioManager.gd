@@ -33,14 +33,30 @@ var _busAliasLUT : Dictionary = {
 	"music":  "Music"
 }
 
+var _busAliasKeyChainLUT : Dictionary = {}
+
+var _metaPlayerValidKeys : Array = [
+	"fp", "volume_db", "loop", "bus", "bpm", "beats_per_bar", "bars", "reference",
+	"autoplay", "transitions", "playing", "children"
+]
+
 var _playingAllowed : bool = true
 
+################################################################################
+#### EXPORT MEMBER VARIABLES ###################################################
+################################################################################
 @export var _sfxDatabaseFilePath : String = CONS_TRAIN_T.CONFIGURATION_FILES.AUDIO.SFX.PATH
 @export var _musicDatabaseFilePath : String = CONS_TRAIN_T.CONFIGURATION_FILES.AUDIO.MUSIC.PATH
 
+################################################################################
+#### ONREADY MEMBER VARIABLES ##################################################
+################################################################################
 @onready var _sfxManager := $sfxManager
 @onready var _musicManager := $musicManager
 
+################################################################################
+#### PRIVATE MEMBER FUNCTIONS ##################################################
+################################################################################
 func _add_and_configure_meta_player(database : Dictionary, audioID : Array, parent : Node, keyChainParent : Array, data : Dictionary):
 	# DESCRIPTION: If the data passed to the method is an sound and not a (sub)category
 	# REMARK: Decision based upon whether the key "fp" exists
@@ -68,7 +84,16 @@ func _add_and_configure_meta_player(database : Dictionary, audioID : Array, pare
 			var _tmp_duration : float = _tmp_metaPlayer.stream.get_length() 
 
 			_tmp_metaPlayer.beats_per_bar = 4
-			_tmp_metaPlayer.bars = floor(_tmp_duration/_tmp_metaPlayer.beats_per_bar)
+			_tmp_metaPlayer.bars = 1
+
+			var _tmp_bars : int = floor(_tmp_duration/_tmp_metaPlayer.beats_per_bar)
+
+			# DESCRIPTION: Take into account very short audio files, e.g. SFX, where 
+			# the total number of bars is under 1. Only use calculated number of bars
+			# when greater than 1
+			if _tmp_bars > 1:
+				_tmp_metaPlayer.bars = _tmp_bars
+
 			_tmp_metaPlayer.tempo = (_tmp_metaPlayer.beats_per_bar * _tmp_metaPlayer.bars) / (_tmp_duration/60) 
 
 		parent.add_child(_tmp_metaPlayer)
@@ -136,11 +161,21 @@ func _configure_meta_player_transitions(data : Dictionary, pruned : Dictionary =
 ################################################################################
 #### PUBLIC MEMBER FUNCTIONS ###################################################
 ################################################################################
-func set_bus_level(keyChain : Array, value : float) -> void:
-	var _tmp_busName = DictionaryParsing.get_by_key_chain_safe(self._busAliasLUT, keyChain)
+func set_bus_level(busName : String, value : float) -> void:
 	var _tmp_decibel = linear_to_db(value/100)
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(busName), _tmp_decibel)
 
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(_tmp_busName), _tmp_decibel)
+func set_bus_level_by_key_chain(keyChain : Array, value : float) -> void:
+	var _tmp_busName = DictionaryParsing.get_by_key_chain_safe(self._busAliasLUT, keyChain)
+	self.set_bus_level(_tmp_busName, value)
+
+func set_bus_levels(data : Dictionary) -> void:
+	for _busName in self._busAliasKeyChainLUT:
+		var _tmp_keyChain : Array = self._busAliasKeyChainLUT[_busName]
+
+		if DictionaryParsing.is_key_chain_valid(data, _tmp_keyChain):
+			var _tmp_value = DictionaryParsing.get_by_key_chain_safe(data, _tmp_keyChain)
+			self.set_bus_level(_busName, _tmp_value)
 
 func enable_request_processing() -> void:
 	self._playingAllowed = true
@@ -155,30 +190,51 @@ func play_sfx(keyChain : Array) -> void:
 func is_song_playing_by_key_chain(keyChain : Array) -> bool:
 	return self._musicManager.is_song_playing_by_key_chain(keyChain)
 
+func is_any_music_playing() -> bool:
+	return self._musicManager.is_any_music_playing()
+
 func play_song_by_key_chain(keyChain : Array) -> void:
 	if self._playingAllowed:
 		self._musicManager.request_song_by_key_chain(keyChain)
 
-func fade_out_master() -> void:
-	var _tmp_busIndex : int = AudioServer.get_bus_index("Master")
+func fade_bus_from_current_level_to(busName : String, value: float, duration : float = 2) -> void:
+	var _tmp_busIndex : int = AudioServer.get_bus_index(busName)
 	var _tmp_volume : float = AudioServer.get_bus_volume_db(_tmp_busIndex)
+	var _tmp_decibel = linear_to_db(value/100)
 	var t = create_tween()
 
 	t.tween_method(
 		AudioServer.set_bus_volume_db.callv, 
 		[_tmp_busIndex,_tmp_volume],
-		[_tmp_busIndex, -90],
-		2
+		[_tmp_busIndex, _tmp_decibel],
+		duration
 	)
 	await t.finished
+	t.kill()
+
+func fade_out_master(duration : float = 2) -> void:
+	await self.fade_bus_from_current_level_to("Master", 0.01, duration)
 
 func fade_out_and_stop_all_playing() -> void:
-	self.fade_out_master()
+	# REMARK: Issue why no audio would play after switching seems to be caused by
+	# the await not blocking the setting of the new bus level, so that it would be
+	# overwritten and therefor no audio would play
+	# TODO: Transition sounds a bit harsh, therefor another attempt with fading 
+	# should be started
+	# await self.fade_out_master()
 	self._musicManager.stop_everything()
 	self._sfxManager.stop_everything()
-	self.set_bus_level(["master"], SettingsManager.get_user_setting_by_key_chain_safe(["volume", "master"]))
+	# self.set_bus_level_by_key_chain(["master"], SettingsManager.get_user_setting_by_key_chain_safe(["volume", "master"]))
 
 func _ready() -> void:
+	# DESCRIPTION: Create the bus alias key chain LUT
+	var _tmp_keyChains : Array[Array] = []
+
+	DictionaryParsing.find_all_key_chains(self._busAliasLUT, _tmp_keyChains)
+
+	for _keyChain in _tmp_keyChains:
+		var _tmp_newKey : String = DictionaryParsing.get_by_key_chain_safe(self._busAliasLUT, _keyChain)
+		self._busAliasKeyChainLUT[_tmp_newKey] = _keyChain
 
 	# DESCRIPTION: Load all the music 
 	# REMARK: Not very efficient. Should be adapted to only load what is actually
@@ -192,6 +248,7 @@ func _ready() -> void:
 
 	# DESCRIPTION: Initialize music transitions
 	self._configure_meta_player_transitions(self._musicManager._musicDB)
+	self._musicManager.initialize()
 
 	# DESCRIPTION: Load all the sound effects 
 	# REMARK: Not very efficient. Should be adapted to only load what is actually
@@ -204,3 +261,5 @@ func _ready() -> void:
 		var _tmp_data : Dictionary = _tmp_sfxDB[_sfxID]
 
 		self._add_and_configure_meta_player(self._sfxManager._sfxDB, _tmp_keyChain, _tmp_parent, _tmp_keyChain, _tmp_data)
+
+	self._sfxManager.initialize()

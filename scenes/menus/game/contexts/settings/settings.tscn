@@ -1,0 +1,60 @@
+[gd_scene load_steps=3 format=3 uid="uid://dajxnndjb5pf2"]
+
+[ext_resource type="PackedScene" uid="uid://daomsb2254sgq" path="res://scenes/menus/shared/settings.tscn" id="1_eeucl"]
+[ext_resource type="Script" uid="uid://dpfusc0n2ug3a" path="res://scenes/menus/game/contexts/settings/settings.gd" id="1_ntjuq"]
+
+[node name="settings" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -327.0
+offset_right = 256.0
+offset_bottom = 327.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ntjuq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="settingsControls" parent="VBoxContainer" instance=ExtResource("1_eeucl")]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="resume" type="Button" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Resume"
+
+[node name="spacer" type="Control" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="exitToMainMenu" type="Button" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Exit to Main Menu"
+
+[node name="spacer2" type="Control" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="exitToSystem" type="Button" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(192, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Exit to System"

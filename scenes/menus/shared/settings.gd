@@ -18,7 +18,7 @@ extends Control
 ################################################################################
 #### CONSTANT DEFINITIONS ######################################################
 ################################################################################
-const _uiElementsRootPath : String = "PanelContainer/MarginContainer/VBoxContainer/"
+const _uiElementsRootPath : String = "VBoxContainer/"
 
 ################################################################################
 #### ONREADY MEMBER VARIABLES ##################################################
@@ -93,16 +93,37 @@ func update_display() -> void:
 #### SIGNAL HANDLING ###########################################################
 ################################################################################
 func _on_reset_audio_to_default() -> void:
-	var _tmp_value : Dictionary = SettingsManager.get_user_setting_default_by_key_chain_safe(["volume"])
-	# SettingsManager.update_user_settings(["volume"], _tmp_value)
+	SettingsManager.reset_audio_levels_to_default()
 
 func _on_settings_value_changed(keyChain : Array, value) -> void:
-	SettingsManager.update_user_settings(keyChain, value)
+	SettingsManager.set_user_setting_by_key_chain_safe(keyChain, value)
+
+func _on_settings_manager_update() -> void:
+	# DESCRIPTION: Update the display value of all the CheckButtons
+	# REMARK: Check required, as otherwise manual interaction with button would be impossible
+
+	for _uiElementID in _uiElementLUT:
+		var _tmp_elementType : String = self._uiElementLUT[_uiElementID]["type"]
+
+		match _tmp_elementType:
+			"checkButton":
+				self._uiElementLUT[_uiElementID].reference.update_display(
+					SettingsManager.get_user_setting_by_key_chain_safe(self._uiElementLUT[_uiElementID]["keyChain"])
+				)
+
+			"slider":
+				self._uiElementLUT[_uiElementID].reference.set_value_silent(
+					SettingsManager.get_user_setting_by_key_chain_safe(self._uiElementLUT[_uiElementID]["keyChain"])
+				)
 
 ################################################################################
 #### GODOT LOADTIME FUNCTION OVERRIDES #########################################
 ################################################################################
 func _ready() -> void:
+	# DESCRIPTION: Connect to signals
+	SettingsManager.update.connect(self._on_settings_manager_update)
+
+	# DESCRIPTION: Initialize the UI elements
 	var _tmp_userSettings : Dictionary = SettingsManager.get_user_settings()
 
 	for _uiElementID in self._uiElementLUT:
@@ -120,23 +141,3 @@ func _ready() -> void:
 					_tmp_uiElement["keyChain"], 
 					DictionaryParsing.get_by_key_chain_safe(_tmp_userSettings, _tmp_uiElement["keyChain"])
 				)
-
-################################################################################
-#### GODOT RUNTIME FUNCTION OVERRIDES ##########################################
-################################################################################
-func _process(_delta: float) -> void:
-	if not Engine.is_editor_hint():
-		var _tmp_userSettings : Dictionary = SettingsManager.get_user_settings()
-
-		# DESCRIPTION: Update the display value of all the CheckButtons
-		# REMARK: Check required, as otherwise manual interaction with button would be impossible
-		if SettingsManager.is_new_update_queued():
-			for _uiElementID in _uiElementLUT:
-				if self._uiElementLUT[_uiElementID]["type"] == "checkButton":
-					self._uiElementLUT[_uiElementID].reference.update_display(
-						DictionaryParsing.get_by_key_chain_safe(
-							_tmp_userSettings, self._uiElementLUT[_uiElementID]["keyChain"]
-						)
-					)
-
-			SettingsManager.reset_update_queue()

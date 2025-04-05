@@ -3,6 +3,10 @@ class_name CONS_TRAIN_T
 class COLLISION_LAYERS:
     const CAMERA : int = 2
 
+class Z_INDEX:
+    class GLOBAL:
+        const TRACK_FRONT : int = 2
+
 class DEBUG:
     class DEFAULT_PROPERTIES:
         class GUI:
