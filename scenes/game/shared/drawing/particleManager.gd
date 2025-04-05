@@ -26,7 +26,9 @@ var _contentOrder : Array[Array] = [
     ["1_this-is-a-tech-demo"],
     ["2_to-show-that"],
     ["3_not-only-text"],
-    ["4_but-also-images"]
+    ["4_but-also-images"],
+    ["5_image-bw"],
+    ["6_even-in-color"]
 ]
 var _contentOrderIndex : int = 0
 var _lastContent : bool = false
@@ -72,6 +74,24 @@ var _activeParticleSystem : GPUParticles2D = null
         },
         "particle_system" : {
             "reference": $text4/GPUParticles2D
+        }
+    },
+    "5_image-bw": {
+        "texture": {
+            "fp": "res://scenes/game/open/assets/2d/drawables/5_image-bw.png",
+            "next_threshold": 0.3 #0.3
+        },
+        "particle_system" : {
+            "reference": $text5/GPUParticles2D
+        }
+    },
+    "6_even-in-color": {
+        "texture": {
+            "fp": "res://scenes/game/open/assets/2d/drawables/6_even-in-color.png",
+            "next_threshold": 0.3 #0.3
+        },
+        "particle_system" : {
+            "reference": $text6/GPUParticles2D
         }
     }
 }
