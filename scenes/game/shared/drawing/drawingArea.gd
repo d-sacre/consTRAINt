@@ -346,9 +346,7 @@ func _evaluate_drawing_progress() -> void:
 
 			else:
 				self._lastContentFinished = true
-				print_debug("Emit end of demo signal")
-				self.end_of_demo.emit()
-				self._particleManager.stop_effect()
+				_tmp_status = true
 
 	self._requestShowNextButton = _tmp_status
 
@@ -357,8 +355,7 @@ func _determine_next_button_visibility() -> void:
 
 	if self._requestShowNextButton:
 		if not self._nextButtonHiddenLocked:
-			if not self._lastContentFinished:
-				_tmp_status = true
+			_tmp_status = true
 
 	self._nextButton.visible = _tmp_status
 
@@ -414,6 +411,10 @@ func _on_next_button_pressed() -> void:
 
 	if not self._lastContentFinished:
 		self._initialize_new_drawing()
+
+	else:
+		print_debug("Emit end of demo signal")
+		self.end_of_demo.emit()
 		
 func _on_last_content() -> void:
 	print_debug("last content signal received")

@@ -44,4 +44,5 @@ layout_mode = 1
 layout_mode = 1
 
 [node name="endOfDemo" parent="contexts" instance=ExtResource("5_ep7b7")]
+visible = false
 layout_mode = 1

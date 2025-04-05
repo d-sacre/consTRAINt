@@ -9,7 +9,6 @@ extends PanelContainer
 ################################################################################
 ################################################################################
 signal hide_menu
-signal show_settings_context
 
 ################################################################################
 #### CONSTANT DEFINITIONS ######################################################
@@ -27,7 +26,6 @@ const _buttonPathRoot : String = "MarginContainer/VBoxContainer/HBoxContainer/"
 		"web": true
 	},
 	"exitToMainMenu": {
-		"text": "Exit to Main Menu",
 		"reference": self.get_node(self._buttonPathRoot + "exitToMainMenu"),
 		"callback": _on_exit_to_main_menu_pressed,
 		"web": true

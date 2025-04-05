@@ -33,9 +33,12 @@ layout_mode = 2
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
 bbcode_enabled = true
-text = "[b]End of Demo[/b]
+text = "[font_size=42][b]End of Demo[/b][/font_size]
+[font_size=24]
+You have reached the end of this demo. Thank you very much for trying it out!
 
-You have reached the end of this demo. You can now enjoy the soundtrack for a while or leave the game."
+You can now enjoy the soundtrack for a while or leave the game.
+[/font_size]"
 fit_content = true
 
 [node name="spacer" type="Control" parent="MarginContainer/VBoxContainer"]
@@ -48,9 +51,11 @@ layout_mode = 2
 [node name="continue" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(164, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "Continue"
 
 [node name="exitToMainMenu" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(164, 0)
 layout_mode = 2
-text = "Exit to Main Menu"
+theme_override_font_sizes/font_size = 24
+text = "Main Menu"

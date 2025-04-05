@@ -34,7 +34,9 @@ theme_override_constants/margin_bottom = 12
 layout_mode = 2
 
 [node name="resume" type="Button" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "Resume"
 
 [node name="spacer" type="Control" parent="VBoxContainer/MarginContainer/HBoxContainer"]
@@ -42,7 +44,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="exitToMainMenu" type="Button" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "Exit to Main Menu"
 
 [node name="spacer2" type="Control" parent="VBoxContainer/MarginContainer/HBoxContainer"]
@@ -50,5 +54,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="exitToSystem" type="Button" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(192, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "Exit to System"
