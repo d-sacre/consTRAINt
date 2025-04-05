@@ -126,7 +126,7 @@ func _resize(image : Image, factor : float = DRAWING.PROGRESS.RESIZE_FACTOR) -> 
 
 	_tmp_image.resize(_tmp_size.x, _tmp_size.y, Image.Interpolation.INTERPOLATE_NEAREST)
 
-	_tmp_image.save_png("res://resize.png")
+	# _tmp_image.save_png("res://resize.png")
 
 	return _tmp_image 
 
