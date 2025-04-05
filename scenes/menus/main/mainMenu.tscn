@@ -108,6 +108,26 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Exit"
 
+[node name="MarginContainer" type="MarginContainer" parent="default"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -193.0
+offset_top = -40.0
+offset_right = 193.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_bottom = 6
+
+[node name="version" type="Label" parent="default/MarginContainer"]
+layout_mode = 2
+text = "Cloud Express v0.0.2 – Technical Demo:  \"Clear Skies\""
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="contexts" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15

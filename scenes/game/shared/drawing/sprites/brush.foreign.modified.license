@@ -6,6 +6,15 @@ SOURCE: https://commons.wikimedia.org/wiki/File:Font_Awesome_5_solid_paint-brush
 LICENSE: Creative Commons Attribution 4.0 International, https://creativecommons.org/licenses/by/4.0/legalcode.txt
 
 ##################################################################################
+#### CHANGES #####################################################################
+##################################################################################
+AUTHOR: dsacre
+DATE: 2025-04-05
+
+CHANGES:
+- two tone color with subtle outlines instead of solid black fill
+
+##################################################################################
 #### LICENSE TEXT ################################################################
 ##################################################################################
 Attribution 4.0 International
