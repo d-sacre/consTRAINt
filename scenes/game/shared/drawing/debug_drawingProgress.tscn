@@ -1,0 +1,77 @@
+[gd_scene load_steps=8 format=3 uid="uid://cfwr3o7uli6t4"]
+
+[ext_resource type="Script" uid="uid://fvtfcc5i7xgi" path="res://scenes/game/shared/drawing/debug_drawingProgress.gd" id="1_y7qbl"]
+[ext_resource type="PackedScene" uid="uid://bo5d5k510xsl" path="res://scenes/game/shared/drawing/subscenes/maskResized.tscn" id="2_1s8li"]
+[ext_resource type="PackedScene" uid="uid://ublhokvooifi" path="res://scenes/game/shared/drawing/subscenes/matteResized.tscn" id="3_5e4cn"]
+[ext_resource type="PackedScene" uid="uid://b0bvvbe7p5s8q" path="res://scenes/game/shared/drawing/subscenes/maskTimesMatteResized.tscn" id="4_1ehmw"]
+[ext_resource type="PackedScene" uid="uid://d3yj1hra8frh7" path="res://scenes/game/shared/drawing/subscenes/maskOriginal.tscn" id="5_1ehmw"]
+[ext_resource type="PackedScene" uid="uid://c2c8idom5pjde" path="res://scenes/game/shared/drawing/subscenes/matteOriginal.tscn" id="6_sqnyc"]
+[ext_resource type="PackedScene" uid="uid://ctaaxr0ylig5m" path="res://scenes/game/shared/drawing/subscenes/maskTimesMatteOriginal.tscn" id="7_ul8hj"]
+
+[node name="drawingProgressDebug" type="PanelContainer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_y7qbl")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="drawingProgress" type="Label" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Drawing Progress: 0.000000"
+
+[node name="spacer" type="Control" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="nextThreshold" type="Label" parent="VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Next Threshold: 0.300000"
+
+[node name="resized" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="mask" parent="VBoxContainer/resized" instance=ExtResource("2_1s8li")]
+layout_mode = 2
+_name = "Mask (bw, resized)"
+
+[node name="matte" parent="VBoxContainer/resized" instance=ExtResource("3_5e4cn")]
+layout_mode = 2
+_name = "Matte (bw, resized)"
+
+[node name="maskTimesMatte" parent="VBoxContainer/resized" instance=ExtResource("4_1ehmw")]
+layout_mode = 2
+_name = "Mask x Matte (bw, resized, false color)"
+
+[node name="original" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="mask" parent="VBoxContainer/original" instance=ExtResource("5_1ehmw")]
+layout_mode = 2
+_name = "Mask (original)"
+
+[node name="matte" parent="VBoxContainer/original" instance=ExtResource("6_sqnyc")]
+layout_mode = 2
+_name = "Matte (original)"
+
+[node name="maskTimesMatte" parent="VBoxContainer/original" instance=ExtResource("7_ul8hj")]
+layout_mode = 2
+_name = "Mask x Matte (original, false color)"

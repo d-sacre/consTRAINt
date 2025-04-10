@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://ctaaxr0ylig5m"]
+
+[ext_resource type="Script" uid="uid://bcnsw6ut5hvc7" path="res://scenes/game/shared/drawing/subscenes/maskTimesMatteOriginal.gd" id="1_oox0a"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_twuki"]
+viewport_path = NodePath("SubViewport")
+
+[node name="maskTimesMatteOriginal" type="MarginContainer"]
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+script = ExtResource("1_oox0a")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+handle_input_locally = false
+size = Vector2i(1920, 512)
+render_target_update_mode = 4
+
+[node name="TextureRect" type="TextureRect" parent="SubViewport"]
+offset_right = 120.0
+offset_bottom = 32.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="name" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Name"
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(240, 135)
+layout_mode = 2
+texture = SubResource("ViewportTexture_twuki")
+expand_mode = 3

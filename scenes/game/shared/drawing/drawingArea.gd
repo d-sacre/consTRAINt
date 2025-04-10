@@ -1,5 +1,10 @@
 extends Node2D
 
+################################################################################
+#### SIGNALS ###################################################################
+################################################################################
+signal drawing_progress(progress : float, threshold : float)
+signal texture_update
 signal end_of_demo
 
 ################################################################################
@@ -44,11 +49,17 @@ var _drawingProgressEvaluationTimer = 0
 var _drawingFinishedThreshold : float = 1.0
 
 var _contentTexture : CompressedTexture2D
+var _contentMaskResized : Image = Image.new()
 var _contentNonEmptyCoarseLUT : Array[int] = []
 var _contentNonEmptyCoarseLength : int = 0
 var _contentRevealLUT : Array[int] = []
 var _lastContent : bool = false
 var _lastContentFinished : bool = false
+
+var _resizedSize1D : int = 0
+var _resizedSize2D : Vector2i = Vector2i.ZERO
+
+var _matteResizedImage : Image
 
 var _requestShowNextButton : bool = false
 var _nextButtonHiddenLocked : bool = false
@@ -126,8 +137,6 @@ func _resize(image : Image, factor : float = DRAWING.PROGRESS.RESIZE_FACTOR) -> 
 
 	_tmp_image.resize(_tmp_size.x, _tmp_size.y, Image.Interpolation.INTERPOLATE_NEAREST)
 
-	# _tmp_image.save_png("res://resize.png")
-
 	return _tmp_image 
 
 func _convert_image_to_bw_mask_based_on_alpha(image : Image, alpha : int = DRAWING.PROGRESS.ALPHA_THRESHOLD) -> Image:
@@ -171,8 +180,14 @@ func _convert_content_texture_to_non_empty_coarse_lut() -> int:
 	# its properties
 	var _tmp_bwMask : Image = self._convert_image_to_bw_mask_based_on_alpha(_tmp_image)
 	var _tmp_bwMaskResized : Image = self._resize(_tmp_bwMask)
-	var _tmp_maskSize : Vector2i = _tmp_bwMaskResized.get_size()
-	var _tmp_maskSize1d : int = _tmp_maskSize.x * _tmp_maskSize.y
+	self._resizedSize2D = _tmp_bwMaskResized.get_size()
+	var _tmp_maskSize1d : int = self._resizedSize2D.x * self._resizedSize2D.y
+
+	# DESCRIPTION: Copying data which is important for debugging
+	# REMARKS: 
+	# - Not a good position from an architectural point of view
+	# - Should be removed when no longer needed to save on resources
+	self._contentMaskResized.copy_from(_tmp_bwMaskResized)
 
 	# DESCRIPTION: Create the LUT from the mask
 	self._contentNonEmptyCoarseLUT = self._create_white_pixel_lut(_tmp_bwMaskResized)
@@ -245,8 +260,6 @@ func _create_circular_area_offsets(diameter : float) -> Array[Vector2]:
 		for _i in range(_tmp_min, _tmp_max, 1):
 			_tmp_areaFilled.append(Vector2(_i, _row))
 
-	# print_debug("Circular Brush Offsets: ", len(_tmp_areaFilled))
-
 	return _tmp_areaFilled
 
 func _update_drawing_properties(drawingOrigin : Vector2, drawingSize : Vector2i, brushWidth : float = self._lineWidth) -> void:
@@ -264,8 +277,6 @@ func _update_drawing_properties(drawingOrigin : Vector2, drawingSize : Vector2i,
 	# REMARK: Factor 3 hard coded, as otherwise it does not lead to the correct results
 	# TODO: Has to be removed when the bug in the tracking logic is found
 	self.drawing.brush.offsets_from_center = self._create_circular_area_offsets(3*self.drawing.brush.width * DRAWING.PROGRESS.RESIZE_FACTOR)
-
-	# print(self.drawing.origin, self.drawing.size, self.drawing.mouse_limits.x_max, self.drawing.mouse_limits.y_max)
 	
 func _set_content_texture(texture : CompressedTexture2D) -> void:
 	print_debug("Set content texture")
@@ -277,7 +288,15 @@ func _set_content_texture(texture : CompressedTexture2D) -> void:
 	self._convertIndices = ConvertIndices.new(int(self._mattePainting.size.x * DRAWING.PROGRESS.RESIZE_FACTOR))
 
 	# DESCRIPTION: Create LUT from content texture
-	var _tmp_maskSize1d : int = self._convert_content_texture_to_non_empty_coarse_lut()
+	self._resizedSize1D = self._convert_content_texture_to_non_empty_coarse_lut()
+
+	# DESCRIPTION: Setting up debugging data
+	# REMARK: Should be removed when no longer needed to save on resources
+	self._matteResizedImage = Image.create_empty(self._resizedSize2D.x, self._resizedSize2D.y, false, Image.FORMAT_RGBAF)
+
+	for _x in range(0, self._resizedSize2D.x - 1):
+		for _y in range(0, self._resizedSize2D.y - 1):
+			self._matteResizedImage.set_pixel(_x, _y, Color.BLACK)
 
 	# DESCRIPTION: Update data required for mouse/progress tracking
 	self._update_drawing_properties(self._drawingResult.position, self._mattePainting.size)
@@ -285,8 +304,10 @@ func _set_content_texture(texture : CompressedTexture2D) -> void:
 	# DESCRIPTION: Reset all the progress and tracking data to default
 	self._drawingProgress = 0.0
 	self._contentRevealLUT = []
-	self._contentRevealLUT.resize(_tmp_maskSize1d)
+	self._contentRevealLUT.resize(self._resizedSize1D)
 	self._drawingFinishedThreshold = self._particleManager.get_active_content_drawing_finished_threshold()
+
+	self.texture_update.emit()
 
 ## tracks the drawing progress based upon the mouse position[br]
 ## ### Remark[br] 
@@ -320,6 +341,16 @@ func _track_drawing_progress(mousePosition : Vector2) -> void:
 			if _tmp_positionOffsetValidX and _tmp_positionOffsetValidY:
 				_tmp_indicesToUpdate.append(self._convertIndices.from_2d_to_1d(_tmp_positionScaled))
 
+				# DESCRIPTION: Set values in 2d Array for debug purposes
+				if OS.is_debug_build():
+					var _tmp_columnHelper : int = int(floor(_tmp_positionScaled.x))
+					var _tmp_rowHelper : int = int(floor(_tmp_positionScaled.y))
+
+					var _tmp_column : int = max(0, min(_tmp_columnHelper, self._resizedSize2D.x - 1))
+					var _tmp_row : int = max(0, min(_tmp_rowHelper, self._resizedSize2D.y - 1))
+
+					self._matteResizedImage.set_pixel(_tmp_column, _tmp_row, Color.WHITE)
+
 		if _tmp_indicesToUpdate != []:
 			for _index in _tmp_indicesToUpdate:
 				self._contentRevealLUT[_index] = 1
@@ -332,7 +363,7 @@ func _calculate_drawing_progress() -> void:
 	
 	self._drawingProgress = _tmp_progress/self._contentNonEmptyCoarseLength
 
-	print("Determine Drawing Progress: ", self._drawingProgress)
+	self.drawing_progress.emit(self._drawingProgress, self._drawingFinishedThreshold)
 
 func _evaluate_drawing_progress() -> void:
 	var _tmp_status : bool = false
@@ -401,6 +432,12 @@ func allow_drawing(status : bool) -> void:
 	self._lineVisual.visible = status
 	self._lineMattePainting.visible = status
 	self._brush.visible = status
+
+func get_content_mask_texture() -> Texture2D:
+	return self._contentTexture
+
+func get_content_mask_resized() -> Image:
+	return self._contentMaskResized
 
 ################################################################################
 #### SIGNAL HANDLING ###########################################################

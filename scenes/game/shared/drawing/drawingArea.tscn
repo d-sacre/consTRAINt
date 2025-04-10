@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dbx37k4p3yj58" path="res://scenes/game/shared/drawing/drawingArea.gd" id="1_gin6f"]
 [ext_resource type="Texture2D" uid="uid://ue3l8q0uxlx8" path="res://scenes/game/shared/drawing/sprites/brush.png" id="2_bttsk"]
 [ext_resource type="Shader" uid="uid://bu6bryoyhd10y" path="res://scenes/game/shared/drawing/shaders/masking.gdshader" id="2_nnmog"]
-[ext_resource type="Texture2D" uid="uid://dl38m11t3p2qh" path="res://icon.svg" id="2_ue6yi"]
+[ext_resource type="Shader" uid="uid://c7rkybnq05igu" path="res://scenes/game/shared/drawing/shaders/maskTimesMatte_falseColor.gdshader" id="4_nk1ye"]
 [ext_resource type="PackedScene" uid="uid://bnj5cpfaeell8" path="res://scenes/game/shared/drawing/particleManager.tscn" id="4_ue6yi"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_ue6yi"]
@@ -22,7 +22,7 @@ viewport_path = NodePath("mattePainting")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_nk1ye"]
 resource_local_to_scene = true
-shader = ExtResource("2_nnmog")
+shader = ExtResource("4_nk1ye")
 shader_parameter/mask = SubResource("ViewportTexture_6b8b7")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_nk1ye"]
@@ -45,7 +45,6 @@ gui_disable_input = true
 size = Vector2i(1920, 512)
 
 [node name="mattePersistent" type="Sprite2D" parent="mattePainting"]
-texture = ExtResource("2_ue6yi")
 centered = false
 
 [node name="lineVisualizer" type="Sprite2D" parent="mattePainting"]

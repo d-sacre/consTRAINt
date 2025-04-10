@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://b0bvvbe7p5s8q"]
+
+[ext_resource type="Texture2D" uid="uid://cwxfxb4tkim7d" path="res://resize.png" id="1_ovrjq"]
+[ext_resource type="Script" uid="uid://f8e1wcpqhaf6" path="res://scenes/game/shared/drawing/subscenes/maskTimesMatteResized.gd" id="1_twuki"]
+[ext_resource type="Shader" uid="uid://cabvqor3k8cr" path="res://scenes/game/shared/drawing/shaders/maskTimesMatteResized_falseColor.gdshader" id="2_8txqc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hp72s"]
+shader = ExtResource("2_8txqc")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_twuki"]
+viewport_path = NodePath("SubViewport")
+
+[node name="maskTimesMatteResized" type="MarginContainer"]
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+script = ExtResource("1_twuki")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+handle_input_locally = false
+size = Vector2i(120, 32)
+render_target_update_mode = 4
+
+[node name="TextureRect" type="TextureRect" parent="SubViewport"]
+material = SubResource("ShaderMaterial_hp72s")
+offset_right = 120.0
+offset_bottom = 32.0
+texture = ExtResource("1_ovrjq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="name" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Name"
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(240, 135)
+layout_mode = 2
+texture = SubResource("ViewportTexture_twuki")
+expand_mode = 3
