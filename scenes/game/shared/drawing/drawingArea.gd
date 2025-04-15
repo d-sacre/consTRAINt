@@ -51,6 +51,7 @@ var _drawingFinishedThreshold : float = 1.0
 var _contentTexture : CompressedTexture2D
 var _contentMaskResized : Image = Image.new()
 var _contentNonEmptyCoarseLUT : Array[int] = []
+var _contentNonEmptyCoarse2DLUT : Array[Vector2i] = []
 var _contentNonEmptyCoarseLength : int = 0
 var _contentRevealLUT : Array[int] = []
 var _lastContent : bool = false
@@ -79,6 +80,8 @@ var _nextButtonHiddenLocked : bool = false
 
 @onready var _mattePainting : SubViewport = $mattePainting
 @onready var _mattePaintingPersistence : Sprite2D = $mattePainting/mattePersistent
+
+@onready var _mattePaintingResized : SubViewport = $mattePaintingResized
 
 @onready var _contentReveal : SubViewport = $contentReveal
 @onready var _contentRevealSprite : Sprite2D = $contentReveal/mask
@@ -167,6 +170,9 @@ func _create_white_pixel_lut(image : Image) -> Array[int]:
 
 			if _tmp_pixel == Color.WHITE:
 				_tmp_lut.append(self._convertIndices.from_2d_to_1d(Vector2(_x, _y)))
+				# REMARK: Only temporary, until logic is changed
+				# TODO: Make this the return value of the function
+				self._contentNonEmptyCoarse2DLUT.append(Vector2i(_x, _y))
 
 	_tmp_lut.sort()
 
@@ -202,6 +208,7 @@ func _create_circular_area_offsets(diameter : float) -> Array[Vector2]:
 
 	# DESCRIPTION: Calculate the circle outline with the Method of Jesko
 	# DERIVED FROM: https://de.wikipedia.org/wiki/Rasterung_von_Kreisen
+	# TODO: VERIFY IF FACTOR 16 IS CORRECT
 	var t1 = _tmp_radius / 16;
 	var t2 = 0;
 	var x  = _tmp_radius;
@@ -355,6 +362,22 @@ func _track_drawing_progress(mousePosition : Vector2) -> void:
 			for _index in _tmp_indicesToUpdate:
 				self._contentRevealLUT[_index] = 1
 
+func _calculate_drawing_progress_from_resized_image() -> void:
+	var _tmp_progress : float = 0.0
+
+	self._matteResizedImage = self._mattePaintingResized.get_texture().get_image()
+
+	for _pixelCoordinate in self._contentNonEmptyCoarse2DLUT:
+		var _tmp_pixel : Color = self._matteResizedImage.get_pixelv(_pixelCoordinate)
+		var _tmp_colorAboveThreshold : bool = (_tmp_pixel.r >= 0.6) and (_tmp_pixel.g >= 0.6) and (_tmp_pixel.b >= 0.6)
+
+		if _tmp_colorAboveThreshold:
+			_tmp_progress += 1
+	
+	self._drawingProgress = _tmp_progress/self._contentNonEmptyCoarseLength
+
+	self.drawing_progress.emit(self._drawingProgress, self._drawingFinishedThreshold)
+
 func _calculate_drawing_progress() -> void:
 	var _tmp_progress : float = 0.0
 
@@ -364,6 +387,22 @@ func _calculate_drawing_progress() -> void:
 	self._drawingProgress = _tmp_progress/self._contentNonEmptyCoarseLength
 
 	self.drawing_progress.emit(self._drawingProgress, self._drawingFinishedThreshold)
+
+func _evaluate_drawing_progress_from_resized_image() -> void:
+	var _tmp_status : bool = false
+
+	# REMARK: Currently hardcoded. Has to be changed after the progress
+	# tracking logic has been updated to function properly!
+	if self._drawingProgress >= 0.95: #>= self._drawingFinishedThreshold:
+		if not self._drawingState == DRAWING.STATES.NEXT:
+			if not self._lastContent:
+				_tmp_status = true
+
+			else:
+				self._lastContentFinished = true
+				_tmp_status = true
+
+	self._requestShowNextButton = _tmp_status
 
 func _evaluate_drawing_progress() -> void:
 	var _tmp_status : bool = false

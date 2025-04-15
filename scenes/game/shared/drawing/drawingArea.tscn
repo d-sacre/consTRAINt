@@ -1,10 +1,13 @@
-[gd_scene load_steps=14 format=3 uid="uid://4rtxdncply62"]
+[gd_scene load_steps=15 format=3 uid="uid://4rtxdncply62"]
 
 [ext_resource type="Script" uid="uid://dbx37k4p3yj58" path="res://scenes/game/shared/drawing/drawingArea.gd" id="1_gin6f"]
 [ext_resource type="Texture2D" uid="uid://ue3l8q0uxlx8" path="res://scenes/game/shared/drawing/sprites/brush.png" id="2_bttsk"]
 [ext_resource type="Shader" uid="uid://bu6bryoyhd10y" path="res://scenes/game/shared/drawing/shaders/masking.gdshader" id="2_nnmog"]
 [ext_resource type="Shader" uid="uid://c7rkybnq05igu" path="res://scenes/game/shared/drawing/shaders/maskTimesMatte_falseColor.gdshader" id="4_nk1ye"]
 [ext_resource type="PackedScene" uid="uid://bnj5cpfaeell8" path="res://scenes/game/shared/drawing/particleManager.tscn" id="4_ue6yi"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_8gue5"]
+viewport_path = NodePath("mattePainting")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_ue6yi"]
 viewport_path = NodePath("mattePainting")
@@ -58,6 +61,26 @@ begin_cap_mode = 2
 end_cap_mode = 2
 round_precision = 32
 antialiased = true
+
+[node name="mattePaintingResized" type="SubViewport" parent="."]
+disable_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(120, 32)
+
+[node name="ColorRect" type="ColorRect" parent="mattePaintingResized"]
+custom_minimum_size = Vector2(120, 32)
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0, 0, 0, 1)
+
+[node name="TextureRect" type="TextureRect" parent="mattePaintingResized"]
+custom_minimum_size = Vector2(120, 32)
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("ViewportTexture_8gue5")
+expand_mode = 3
+stretch_mode = 4
 
 [node name="drawingShape" type="SubViewport" parent="."]
 disable_3d = true

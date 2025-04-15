@@ -30,12 +30,35 @@ var _contentMaskResizedTexture : Texture2D
 
 @onready var _drawingArea : Node2D = get_parent().get_tree().root.get_node("game/railcar/interior/drawingArea")
 
+################################################################################
+#### PRIVATE MEMBER FUNCTIONS ##################################################
+################################################################################
+func _drawing_progress_from_resized_image(progress : float, threshold : float) -> void:
+	self._progressLabel.text = self._progressLabelText.format({"progress": "%0.6f" % progress})
+	self._thresholdLabel.text = self._thresholdLabelText.format({"threshold": "%0.6f" % threshold})
+
+func _drawing_progress(progress : float, threshold : float) -> void:
+	self._progressLabel.text = self._progressLabelText.format({"progress": "%0.6f" % progress})
+	self._thresholdLabel.text = self._thresholdLabelText.format({"threshold": "%0.6f" % threshold})
+
+	# DESCRIPTION: Load the new resized matte image
+	self._matteResizedDisplay.update_display(ImageTexture.create_from_image(self._drawingArea._matteResizedImage)) 
+
+func _update_texture_helper() -> void:
+	self._matteResizedDisplay.update_display(ImageTexture.create_from_image(self._drawingArea._matteResizedImage)) 
+
+func _update_texture_helper_from_resized_image() -> void:
+	self._matteResizedDisplay.update_display(self._drawingArea.get_node("mattePaintingResized").get_texture())
+
+################################################################################
+#### PUBLIC MEMBER FUNCTIONS ###################################################
+################################################################################
 func update_texture() -> void:
 	self._contentMaskResized = self._drawingArea.get_content_mask_resized()
 	self._contentMaskResizedTexture = ImageTexture.create_from_image(self._contentMaskResized)
 
 	self._maskResizedDisplay.update_display(self._contentMaskResizedTexture)
-	self._matteResizedDisplay.update_display(ImageTexture.create_from_image(self._drawingArea._matteResizedImage)) 
+	self._update_texture_helper()
 	self._matteTimesMaskResizedDisplay.update_display(self._contentMaskResizedTexture)
 
 	# DESCRIPTION: Set the shader mask to the correct viewport texture
@@ -50,11 +73,7 @@ func update_texture() -> void:
 #### SIGNAL HANDLING ###########################################################
 ################################################################################
 func _on_drawing_progress(progress : float, threshold : float) -> void:
-	self._progressLabel.text = self._progressLabelText.format({"progress": "%0.6f" % progress})
-	self._thresholdLabel.text = self._thresholdLabelText.format({"threshold": "%0.6f" % threshold})
-
-	# DESCRIPTION: Load the new resized matte image
-	self._matteResizedDisplay.update_display(ImageTexture.create_from_image(self._drawingArea._matteResizedImage)) 
+	self._drawing_progress(progress, threshold)
 
 func _on_texture_update() -> void:
 	print_debug("debug drawing progress received texture update signal")
